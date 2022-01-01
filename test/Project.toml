@@ -1,0 +1,7 @@
+[deps]
+AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
+CompatHelperLocal = "5224ae11-6099-4aaa-941d-3aab004bd678"
+OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
