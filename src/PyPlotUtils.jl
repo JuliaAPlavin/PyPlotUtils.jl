@@ -16,7 +16,9 @@ using Colors
 export
     plt, matplotlib,
     .., ±, ×,
-    pyplot_style!, keep_plt_lims, set_xylims, xylabels,
+    pyplot_style!,
+    keep_plt_lims, set_xylims, xylims_set, lim_intersect, lim_union,
+    xylabels,
     imshow_ax, SymLog, ColorBar,
     mpl_color, adjust_lightness
 
@@ -47,13 +49,28 @@ function keep_plt_lims(func, ax=gca(); x=true, y=true)
 end
 
 extract_xylims(L::Rectangle) = (@assert dimension(L) == 2; endpoints.(components(L)))
-function set_xylims(L; inv=[], ax=gca())
+function xylims_set(L; inv=[], ax=gca())
     xl, yl = extract_xylims(L)
     ax.set_xlim(xl...)
     ax.set_ylim(yl...)
     for k in [inv;]
         getproperty(ax, Symbol(:invert_, k, :axis))()
     end
+end
+const set_xylims = xylims_set  # backwards compatibility
+
+"    lim_intersect(; [x::Interval], [y::Interval])
+Shrink plot limits to the intersection of current limits with passed intervals. "
+function lim_intersect(; x=nothing, y=nothing)
+    !isnothing(x) && plt.xlim(extrema(Interval(plt.xlim()...) ∩ x))
+    !isnothing(y) && plt.ylim(extrema(Interval(plt.ylim()...) ∩ y))
+end
+
+"    lim_union(; [x::Interval], [y::Interval])
+Expand plot limits to the union of current limits with passed intervals. "
+function lim_union(; x=nothing, y=nothing)
+    !isnothing(x) && plt.xlim(extrema(Interval(plt.xlim()...) ∩ x))
+    !isnothing(y) && plt.ylim(extrema(Interval(plt.ylim()...) ∩ y))
 end
 
 function xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantity, kwargs...)
