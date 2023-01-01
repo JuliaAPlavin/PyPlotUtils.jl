@@ -7,7 +7,8 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
 	# "font.size" in pt: 1 pt = 1/72 inches
 	fontsize_axunits = (matplotlib.rcParams["font.size"] / 72) / ax_height_inches
 	
-	ax.get_xlim()  # sometimes, transforms are not "initialized" (?) when calling this function
+	xl = ax.get_xlim()  # sometimes, transforms are not "initialized" (?) without calling this function
+	x_increasing = xl[2] >= xl[1]
     transDataAxes = ax.transData + ax.transAxes.inverted()
 	@p begin
 		plt.gca().get_children()
@@ -33,7 +34,9 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
 				xy = @p begin
 					obj.get_xydata()
 					eachrow
-					maximum()
+					collect
+					filter(x_increasing ? _[1] <= xl[2] : _[1] >= xl[2])
+					x_increasing ? maximum(__) : minimum(__)
 					transDataAxes.transform()
 				end
 				(; label=obj.get_label(), xy, color=obj.get_color() |> mpl_color)
