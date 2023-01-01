@@ -16,6 +16,7 @@ adjust_lightness(:C0, 0.5)
 adjust_lightness(:C0, 1.5)
 
 set_xylims((5 ± 1)^2)
+set_xylims((5 ± 1) × (1..5))
 
 xylabels("a", "b")
 xylabels("a", "b"; inline=true)

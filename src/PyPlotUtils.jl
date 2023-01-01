@@ -5,6 +5,7 @@ import PyPlot
 using PyPlot: plt, matplotlib
 using IntervalSets
 using DomainSets
+using DomainSets: ×
 using AxisKeys: KeyedArray, axiskeys, dimnames
 using OffsetArrays: OffsetArray
 using Unitful: Quantity, ustrip, unit
