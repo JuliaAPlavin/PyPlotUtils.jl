@@ -2,12 +2,19 @@ module PyPlotUtils
 
 using PyCall
 import PyPlot
+using PyPlot: plt, matplotlib
+using IntervalSets
+using DomainSets
 using AxisKeys: KeyedArray, axiskeys
 using OffsetArrays: OffsetArray
 using Unitful: ustrip
 using StatsBase: mad
 
-export pyplot_style!, keep_plt_lims, adjust_lightness, set_xylims, xylabels_compact, colorbar_symlog, imshow_symlog
+export
+    plt, matplotlib,
+    .., ±, ×,
+    pyplot_style!, keep_plt_lims, set_xylims,
+    adjust_lightness, xylabels_compact, colorbar_symlog, imshow_symlog
 
 get_plt() = pyimport("matplotlib.pyplot")
 get_matplotlib() = pyimport("matplotlib")
@@ -41,14 +48,15 @@ function adjust_lightness(color, amount)
     return pyimport("colorsys").hls_to_rgb(c[1], max(0, min(1, amount * c[2])), c[3])
 end
 
-process_lims(lims::Real; inv_x=false) = (xlim=inv_x ? (lims, -lims) : (-lims, lims), ylim=(-lims, lims))
-process_lims(lims::Tuple; inv_x=false) = (xlim=inv_x ? reverse(extrema(lims[1])) : extrema(lims[1]), ylim=extrema(lims[2]))
-
-set_xylims(lims; inv_x=false) = if lims != nothing
-    lims = process_lims(lims; inv_x)
-    plt = get_plt()
-    plt.xlim(lims.xlim...)
-    plt.ylim(lims.ylim...)
+extract_xylims(L::Rectangle) = (@assert dimension(L) == 2; endpoints.(components(L)))
+function set_xylims(L; inv=[])
+    xl, yl = extract_xylims(L)
+    ax = get_plt().gca()
+    ax.set_xlim(xl...)
+    ax.set_ylim(yl...)
+    for k in [inv;]
+        getproperty(ax, Symbol(:invert_, k, :axis))()
+    end
 end
 
 function colorbar_symlog(; linthresh, label=nothing, title=nothing)

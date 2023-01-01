@@ -5,6 +5,8 @@ version = "0.1.1"
 
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
+DomainSets = "5b8099bc-c8ec-5219-889f-1d9e522a28bf"
+IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
 OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
@@ -13,9 +15,11 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 AxisKeys = "0.1"
+DomainSets = "0.5.9"
+IntervalSets = "0.5.3"
 OffsetArrays = "1.10"
 PyCall = "1.92"
 PyPlot = "2.9"
 StatsBase = "0.33"
 Unitful = "1.9"
-julia = "1.6"
+julia = "1.7"
