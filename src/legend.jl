@@ -10,7 +10,7 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
 		plt.gca().get_children()
 		filter(!startswith(string(_.get_label()), "_"))
 		filtermap() do obj
-			if PyPlotUtils.PyCall.pyisinstance(obj, matplotlib.collections.PolyCollection)
+			if pyisinstance(obj, matplotlib.collections.PolyCollection)
 				xy = @p begin
 					obj.get_paths()
 					only
@@ -19,7 +19,7 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
 					transDataAxes.transform()
 				end
 				(; label=obj.get_label(), xy, color=obj.get_edgecolor() |> eachrow |> only)
-			elseif PyPlotUtils.PyCall.pyisinstance(obj, matplotlib.lines.Line2D)
+			elseif pyisinstance(obj, matplotlib.lines.Line2D)
 				xy = @p begin
 					obj.get_xydata()
 					eachrow
