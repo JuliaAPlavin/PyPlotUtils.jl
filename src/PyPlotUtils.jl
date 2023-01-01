@@ -24,10 +24,12 @@ export
     keep_plt_lims, set_xylims, xylims_set, lim_intersect, lim_union,
     xylabels, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
-    mpl_color, adjust_lightness
+    mpl_color, adjust_lightness,
+    ScalebarArtist
 
 
 include("legend.jl")
+include("artists.jl")
 
 
 get_plt() = pyimport("matplotlib.pyplot")

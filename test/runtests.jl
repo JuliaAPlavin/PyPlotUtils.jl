@@ -41,5 +41,7 @@ imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"))
 imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"), ColorBar())
 imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"), ColorBar(); norm=SymLog())
 
+plt.gca().add_artist(ScalebarArtist([(1, "px")]))
+
 import CompatHelperLocal as CHL
 CHL.@check()
