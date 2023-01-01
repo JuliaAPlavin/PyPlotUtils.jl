@@ -187,9 +187,10 @@ For other arrays `axes(A)` become coordinates. Works with regular `Array`s, `Off
 Extra `kwargs` not listed in the signature are passed to `matplotlib`'s `imshow`.
 """
 function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothing, cmap=nothing, background_val=0, kwargs...)
+    plt.sca(ax)
     norm = get_mpl_norm(A, norm)
     isnothing(background_val) || ax.set_facecolor(plt.get_cmap(cmap)(norm(background_val)))
-    mappable = ax.imshow(
+    mappable = plt.imshow(
         parent(A) |> permutedims;
         origin=:lower, extent=extent_arr(A),
         norm, cmap,
@@ -205,6 +206,7 @@ function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothi
         cb = plt.colorbar(mappable; colorbar.label, pad=0.02, cbar_kws...)
         isnothing(colorbar.title) || cb.ax.set_title(colorbar.title)
     end
+    return mappable
 end
 
 """    axplotfunc(f; ax=plt.gca(), n=10, [plot() kwargs...])
