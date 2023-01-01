@@ -11,6 +11,10 @@ using OffsetArrays: OffsetArray
 using Unitful: Quantity, ustrip, unit
 using StatsBase: mad
 using Colors
+using NonNegLeastSquares: nonneg_lsq
+using DataPipes
+using Accessors: @optic, set
+using LinearAlgebra: tril
 
 
 export
@@ -18,9 +22,13 @@ export
     .., ±, ×,
     pyplot_style!,
     keep_plt_lims, set_xylims, xylims_set, lim_intersect, lim_union,
-    xylabels,
+    xylabels, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
     mpl_color, adjust_lightness
+
+
+include("legend.jl")
+
 
 get_plt() = pyimport("matplotlib.pyplot")
 get_matplotlib() = pyimport("matplotlib")

@@ -1,5 +1,4 @@
 using PyPlotUtils
-using PyPlot
 using AxisKeys
 using OffsetArrays
 using Unitful
@@ -20,6 +19,12 @@ xylims_set((5 ± 1) × (1..5))
 
 lim_intersect(x=5 ± 1)
 lim_union(y=5 ± 1)
+
+legend_inline_right()
+plt.plot(1:10, label="abc")
+legend_inline_right()
+plt.plot(1:10, label="def")
+legend_inline_right()
 
 xylabels("a", "b")
 xylabels("a", "b"; inline=true)
