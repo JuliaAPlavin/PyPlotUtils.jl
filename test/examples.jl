@@ -88,7 +88,7 @@ let
 		plt.sca(a)
 		plt.plot(xs, ys)
 		plt.xlim(0, [1e-3, 0.1, 10, 1000][i])
-		plt.gca().add_artist(ScalebarArtist([(100, x -> x > 1e3 ? f"{x/1e3:d} km" : f"{x} m")]))
+		plt.gca().add_artist(ScalebarArtist([(100, x -> x > 1e3 ? f"{x/1e3:d} km" : f"{x} m")], fontsize=5))
 	end
 	plt.gcf()
 end
@@ -646,7 +646,7 @@ version = "0.1.27"
 
 [[deps.FlexiMaps]]
 deps = ["Accessors", "InverseFunctions"]
-git-tree-sha1 = "006f73dc1cf09257f5dc443a047f7f0942803e38"
+git-tree-sha1 = "94524bd09b7db980d53eee86566058945847688c"
 uuid = "6394faf6-06db-4fa8-b750-35ccc60383f7"
 version = "0.1.3"
 
@@ -912,7 +912,7 @@ version = "2.11.0"
 deps = ["Accessors", "AxisKeys", "Colors", "DataPipes", "DirectionalStatistics", "DomainSets", "FlexiMaps", "IntervalSets", "LinearAlgebra", "NonNegLeastSquares", "PyCall", "PyPlot", "StatsBase", "Unitful"]
 path = "../../home/aplavin/work/.julia/dev/PyPlotUtils"
 uuid = "5384e752-6c47-47b3-86ac-9d091b110b31"
-version = "0.1.18"
+version = "0.1.19"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
