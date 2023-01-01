@@ -11,7 +11,8 @@ using StatsBase: mad
 using Colors
 using NonNegLeastSquares: nonneg_lsq
 using DirectionalStatistics
-using DataPipes
+using DataPipes: @p
+using FlexiMaps: filtermap
 using Accessors
 using LinearAlgebra: tril
 
