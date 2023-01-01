@@ -19,11 +19,23 @@ using OffsetArrays, AxisKeys
 # ╔═╡ 2b2d10b2-50ec-4ff5-8845-fdbf0b747824
 using Unitful, MyUnitful
 
+# ╔═╡ ca76225d-d1ba-408c-9744-05c759b39564
+using VLBIData
+
+# ╔═╡ 6d99bdd6-2ebe-4e76-aee2-d1a189e19c0d
+using ColorSchemes
+
+# ╔═╡ b6e6913a-df63-4be3-b467-fb3a375fcd00
+using Accessors
+
+# ╔═╡ f90e39fd-a2d0-4cab-ab21-d554a49702b0
+using PlutoUI
+
+# ╔═╡ 56a74209-309d-4f43-8bd3-e0a041d15c26
+using Colors
+
 # ╔═╡ b9891544-ad67-490a-814d-15fa3ece154c
 pyplot_style!()
-
-# ╔═╡ ca76225d-d1ba-408c-9744-05c759b39564
-import VLBIData as VLBI
 
 # ╔═╡ 7b29b23d-5db2-464a-b9ba-3ca32c413fdd
 
@@ -85,11 +97,8 @@ let
 	figs
 end
 
-# ╔═╡ f0fac651-d392-4328-9aff-3f2495c05eec
-
-
 # ╔═╡ e98135fd-4ffa-4321-9ff5-35fea3d2fe85
-fimg = VLBI.load(VLBI.FitsImage, joinpath(dirname(pathof(VLBI)), "../test/data/map.fits"))
+fimg = VLBI.load(joinpath(dirname(pathof(VLBI)), "../test/data/map.fits"))
 
 # ╔═╡ 77dd7281-7fa2-492b-908e-e819b09a078b
 let
@@ -100,23 +109,64 @@ let
 	plt.gcf()
 end
 
+# ╔═╡ cd3de117-4b80-44f5-aee9-595d435af230
+
+
+# ╔═╡ 6d9a2e34-798d-4493-8d18-63396822b2ad
+mpl_color("#0f0f0f80")
+
+# ╔═╡ 69ab484b-f880-4cea-8e71-78e6454a04ac
+let
+	plt.figure()
+	plt.plot(rand(20), color=mpl_color(LCHuv, :C0))
+	plt.plot(rand(20), color=@set mpl_color(LCHuv, :C0).l *= 0.4)
+	plt.plot(rand(20), color=@set mpl_color(LCHuv, :C0).l *= 1.6)
+	plt.plot(rand(20), color=alphacolor(mpl_color(LCHuv, :C0), 0.2))
+	plt.gcf()
+end
+
+# ╔═╡ 4c88db25-34d2-4920-ba4e-a1e76e991223
+(@set mpl_color(LCHuv, :C0).l *= 0.2)
+
+# ╔═╡ 9daf1762-5215-4450-8888-4580cfb49341
+convert(XYZ, @set mpl_color(LCHuv, :C0).l *= 0.2) |> Dump
+
+# ╔═╡ 31d5ffd1-1ce6-487f-a607-43c87dbc6e25
+map(ColorSchemes.tab10) do c
+	c = convert(LCHuv, c)
+	map([0.5, 0.75, 1, 1.25, 1.5]) do m
+		@set c.l = m * 50
+	end
+end
+
+# ╔═╡ d96687c5-eeaa-4e1c-859c-a757d0d379c2
+
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
+ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
 MyUnitful = "be63a33b-ca4d-43a5-8045-b0b8c6209429"
 OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 PyPlotUtils = "5384e752-6c47-47b3-86ac-9d091b110b31"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 VLBIData = "679fc9cc-3e84-11e9-251b-cbd013bd8115"
 
 [compat]
+Accessors = "~0.1.7"
 AxisKeys = "~0.1.25"
+ColorSchemes = "~3.16.0"
+Colors = "~0.12.8"
 MyUnitful = "~0.1.0"
 OffsetArrays = "~1.10.8"
-PyPlotUtils = "~0.1.1"
+PlutoUI = "~0.7.30"
+PyPlotUtils = "~0.1.2"
 Revise = "~3.3.1"
 Unitful = "~1.10.1"
 VLBIData = "~0.2.5"
@@ -134,6 +184,18 @@ deps = ["ChainRulesCore", "LinearAlgebra"]
 git-tree-sha1 = "6f1d9bc1c08f9f4a8fa92e3ea3cb50153a1b40d4"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "1.1.0"
+
+[[deps.AbstractPlutoDingetjes]]
+deps = ["Pkg"]
+git-tree-sha1 = "8eaf9f1b4921132a4cff3f36a1d9ba923b14a481"
+uuid = "6e696c72-6542-2067-7265-42206c756150"
+version = "1.1.4"
+
+[[deps.Accessors]]
+deps = ["Compat", "CompositionsBase", "ConstructionBase", "Future", "LinearAlgebra", "MacroTools", "Requires", "Test"]
+git-tree-sha1 = "2e427a6196c7aad4ee35054a9a90e9cb5df5c607"
+uuid = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
+version = "0.1.7"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra"]
@@ -192,6 +254,12 @@ git-tree-sha1 = "9aa8a5ebb6b5bf469a7e0e2b5202cf6f8c291104"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
 version = "1.0.6"
 
+[[deps.ColorSchemes]]
+deps = ["ColorTypes", "Colors", "FixedPointNumbers", "Random"]
+git-tree-sha1 = "6b6f04f93710c71550ec7e16b650c1b9a612d0b6"
+uuid = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
+version = "3.16.0"
+
 [[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
 git-tree-sha1 = "024fe24d83e4a5bf5fc80501a314ce0d1aa35597"
@@ -218,6 +286,11 @@ uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 git-tree-sha1 = "d5b014b216dc891e81fea299638e4c10c657b582"
 uuid = "b152e2b5-7a66-4b01-a709-34e65c35f657"
 version = "0.1.2"
+
+[[deps.CompositionsBase]]
+git-tree-sha1 = "455419f7e328a1a2493cabc6428d79e951349769"
+uuid = "a33af91c-f02d-484b-be07-31d278c5ca2b"
+version = "0.1.1"
 
 [[deps.Conda]]
 deps = ["Downloads", "JSON", "VersionParsing"]
@@ -301,6 +374,27 @@ deps = ["Statistics"]
 git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.4"
+
+[[deps.Future]]
+deps = ["Random"]
+uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
+
+[[deps.Hyperscript]]
+deps = ["Test"]
+git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
+uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
+version = "0.0.4"
+
+[[deps.HypertextLiteral]]
+git-tree-sha1 = "2b078b5a615c6c0396c77810d92ee8c6f470d238"
+uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+version = "0.9.3"
+
+[[deps.IOCapture]]
+deps = ["Logging", "Random"]
+git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
+uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
+version = "0.2.2"
 
 [[deps.IfElse]]
 git-tree-sha1 = "debdd00ffef04665ccbb3e150747a77560e8fad1"
@@ -477,6 +571,12 @@ version = "2.2.0"
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
+[[deps.PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
+git-tree-sha1 = "5c0eb9099596090bb3215260ceca687b888a1575"
+uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+version = "0.7.30"
+
 [[deps.Preferences]]
 deps = ["TOML"]
 git-tree-sha1 = "2cf929d64681236a2e074ffafb8d568733d2e6af"
@@ -500,10 +600,10 @@ uuid = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 version = "2.10.0"
 
 [[deps.PyPlotUtils]]
-deps = ["AxisKeys", "DomainSets", "IntervalSets", "OffsetArrays", "PyCall", "PyPlot", "StatsBase", "Unitful"]
+deps = ["AxisKeys", "Colors", "DomainSets", "IntervalSets", "OffsetArrays", "PyCall", "PyPlot", "StatsBase", "Unitful"]
 path = "../../home/aplavin/.julia/dev/PyPlotUtils.jl"
 uuid = "5384e752-6c47-47b3-86ac-9d091b110b31"
-version = "0.1.1"
+version = "0.1.2"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -678,8 +778,18 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═b43a5d13-cc42-4b92-9a99-fb735e19485a
 # ╠═ce27aab5-7bb6-4b9a-8159-5e017437bc17
 # ╠═b5161436-535d-44ef-aa2e-14880636a9cf
-# ╠═f0fac651-d392-4328-9aff-3f2495c05eec
 # ╠═e98135fd-4ffa-4321-9ff5-35fea3d2fe85
 # ╠═77dd7281-7fa2-492b-908e-e819b09a078b
+# ╠═cd3de117-4b80-44f5-aee9-595d435af230
+# ╠═6d99bdd6-2ebe-4e76-aee2-d1a189e19c0d
+# ╠═b6e6913a-df63-4be3-b467-fb3a375fcd00
+# ╠═6d9a2e34-798d-4493-8d18-63396822b2ad
+# ╠═69ab484b-f880-4cea-8e71-78e6454a04ac
+# ╠═4c88db25-34d2-4920-ba4e-a1e76e991223
+# ╠═9daf1762-5215-4450-8888-4580cfb49341
+# ╠═f90e39fd-a2d0-4cab-ab21-d554a49702b0
+# ╠═31d5ffd1-1ce6-487f-a607-43c87dbc6e25
+# ╠═d96687c5-eeaa-4e1c-859c-a757d0d379c2
+# ╠═56a74209-309d-4f43-8bd3-e0a041d15c26
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
