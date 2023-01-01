@@ -34,7 +34,14 @@ using PlutoUI
 # ╔═╡ 56a74209-309d-4f43-8bd3-e0a041d15c26
 using Colors
 
-# ╔═╡ 7b29b23d-5db2-464a-b9ba-3ca32c413fdd
+# ╔═╡ ba62af69-f903-4793-9061-6be3acf227d5
+md"""
+This notebook shows usage examples for functions in the `PyPlotUtils.jl` package. Each example is preceded by docstrings of relevant functions.
+
+More real-world usage is shown in [InterferometricModels](https://aplavin.github.io/InterferometricModels.jl/test/examples.html) and [VLBIData](https://aplavin.github.io/VLBIData.jl/test/examples.html) package examples.
+"""
+
+# ╔═╡ 7a3a7642-60a5-4c1b-bbf6-25b1a665d7cd
 
 
 # ╔═╡ 4275dc41-84af-4b7b-a530-f80beb1aac78
@@ -52,7 +59,6 @@ pyplot_style!()
 # ╔═╡ a01deb47-6d4a-4659-853e-e6e61b198111
 let
 	plt.figure()
-	plt.title("With keep_plt_lims")
 	plt.plot(rand(20))
 	keep_plt_lims() do
 		plt.plot(rand(30))
@@ -878,15 +884,12 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
-# ╠═242110bc-76c0-11ec-0187-9d409aa82de8
-# ╠═b8d50eeb-32fe-463c-8944-4265a42c3aa6
-# ╠═2b2d10b2-50ec-4ff5-8845-fdbf0b747824
-# ╠═ca76225d-d1ba-408c-9744-05c759b39564
-# ╠═7b29b23d-5db2-464a-b9ba-3ca32c413fdd
+# ╟─ba62af69-f903-4793-9061-6be3acf227d5
+# ╠═7a3a7642-60a5-4c1b-bbf6-25b1a665d7cd
 # ╟─4275dc41-84af-4b7b-a530-f80beb1aac78
 # ╠═b9891544-ad67-490a-814d-15fa3ece154c
 # ╟─4df70632-9661-40d0-b07e-3373e16138f4
-# ╠═121b2529-8eeb-4fbb-97b6-442642cc072f
+# ╟─121b2529-8eeb-4fbb-97b6-442642cc072f
 # ╠═a01deb47-6d4a-4659-853e-e6e61b198111
 # ╟─0a3b34ac-7db7-48c9-90ad-5a6a674710fb
 # ╟─167c61c0-dda1-481c-80bd-a113eec96392
@@ -904,6 +907,10 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═5f8b4265-1a6e-4d06-968e-faa77ae828bd
 # ╠═481829a3-8aa7-4ac9-8d67-99a366a541f9
 # ╠═6c28142a-61b5-4391-93b4-7f6aa65479ff
+# ╠═242110bc-76c0-11ec-0187-9d409aa82de8
+# ╠═b8d50eeb-32fe-463c-8944-4265a42c3aa6
+# ╠═2b2d10b2-50ec-4ff5-8845-fdbf0b747824
+# ╠═ca76225d-d1ba-408c-9744-05c759b39564
 # ╟─4cbb20ea-1e42-42d4-a38a-5bede64d7416
 # ╠═6d99bdd6-2ebe-4e76-aee2-d1a189e19c0d
 # ╠═b6e6913a-df63-4be3-b467-fb3a375fcd00
