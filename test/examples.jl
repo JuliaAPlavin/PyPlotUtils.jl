@@ -46,6 +46,9 @@ pyplot_style!()
 # ╔═╡ 4df70632-9661-40d0-b07e-3373e16138f4
 @doc keep_plt_lims
 
+# ╔═╡ 121b2529-8eeb-4fbb-97b6-442642cc072f
+@doc ScalebarArtist
+
 # ╔═╡ a01deb47-6d4a-4659-853e-e6e61b198111
 let
 	plt.figure()
@@ -54,6 +57,7 @@ let
 	keep_plt_lims() do
 		plt.plot(rand(30))
 	end
+	plt.gca().add_artist(ScalebarArtist([(10, "km")]))
 	plt.gcf()
 end
 
@@ -882,6 +886,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─4275dc41-84af-4b7b-a530-f80beb1aac78
 # ╠═b9891544-ad67-490a-814d-15fa3ece154c
 # ╟─4df70632-9661-40d0-b07e-3373e16138f4
+# ╠═121b2529-8eeb-4fbb-97b6-442642cc072f
 # ╠═a01deb47-6d4a-4659-853e-e6e61b198111
 # ╟─0a3b34ac-7db7-48c9-90ad-5a6a674710fb
 # ╟─167c61c0-dda1-481c-80bd-a113eec96392
