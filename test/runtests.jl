@@ -14,7 +14,7 @@ end
 adjust_lightness(:C0, 0.5)
 adjust_lightness(:C0, 1.5)
 
-xylims_set((5 ± 1) × (1..5))
+set_xylims((5 ± 1) × (1..5))
 
 lim_intersect(x=5 ± 1)
 lim_union(y=5 ± 1)
