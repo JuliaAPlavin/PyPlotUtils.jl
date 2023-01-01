@@ -1,9 +1,12 @@
+"""    ScalebarArtist(scales; target_ax_frac=0.25, [muls], ax=plt.gca(), color=:k, loc="lower center", sep=2.5)
+Create a `matplotlib` `artist` that contains a scalebar with its label. Multiple scalebars are supported, one for each element of `scales = [(units_in_dataunit, unit_label), ...]`.
+"""
 function ScalebarArtist(scales; target_ax_frac=0.25, muls=Real[1, 2, 5, 10, 20, 50, 100, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01], ax=plt.gca(), color=:k, loc="lower center", sep=2.5)
 	ax_size_dataunits = (ax.transAxes + ax.transData.inverted()).transform((1, 1))[1] |> abs
 
 	boxes = map(scales) do (units_in_dataunit, unitstr)
-		mul = argmin(m -> abs(units_in_dataunit * m - target_ax_frac * ax_size_dataunits), muls)
-		length_dataunits = units_in_dataunit * mul
+		mul = argmin(m -> abs(1/units_in_dataunit * m - target_ax_frac * ax_size_dataunits), muls)
+		length_dataunits = 1/units_in_dataunit * mul
 		
 		box = matplotlib.offsetbox.AuxTransformBox(ax.transData)
 		box.add_artist(
