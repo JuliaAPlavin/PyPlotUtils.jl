@@ -42,12 +42,6 @@ function keep_plt_lims(func, ax=nothing; x=true, y=true)
     return res
 end
 
-function adjust_lightness(color, amount)
-    c = get(pyimport("matplotlib.colors").cnames, color, color)
-    c = pyimport("colorsys").rgb_to_hls(pyimport("matplotlib.colors").to_rgb(c)...)
-    return pyimport("colorsys").hls_to_rgb(c[1], max(0, min(1, amount * c[2])), c[3])
-end
-
 extract_xylims(L::Rectangle) = (@assert dimension(L) == 2; endpoints.(components(L)))
 function set_xylims(L; inv=[])
     xl, yl = extract_xylims(L)
@@ -57,6 +51,22 @@ function set_xylims(L; inv=[])
     for k in [inv;]
         getproperty(ax, Symbol(:invert_, k, :axis))()
     end
+end
+
+function xylabels_inline(; x="RA (mas)", y="DEC (mas)", at=(0, 0))
+    keep_plt_lims() do
+        plt = get_plt()
+        ticks = plt.xticks()
+        plt.xticks(ticks[1], [t == at[1] ? x : t for t in ticks[1]])
+        ticks = plt.yticks()
+        plt.yticks(ticks[1], [t == at[2] ? y : t for t in ticks[1]])
+    end
+end
+
+function adjust_lightness(color, amount)
+    c = get(pyimport("matplotlib.colors").cnames, color, color)
+    c = pyimport("colorsys").rgb_to_hls(pyimport("matplotlib.colors").to_rgb(c)...)
+    return pyimport("colorsys").hls_to_rgb(c[1], max(0, min(1, amount * c[2])), c[3])
 end
 
 function colorbar_symlog(; linthresh, label=nothing, title=nothing)
@@ -88,16 +98,6 @@ function imshow_symlog(img::KeyedArray; colorbar=true, linthresh=nothing, lims=n
     end
     set_xylims(lims; inv_x)
     return im
-end
-
-function xylabels_inline(; x="RA (mas)", y="DEC (mas)", at=(0, 0))
-    keep_plt_lims() do
-        plt = get_plt()
-        ticks = plt.xticks()
-        plt.xticks(ticks[1], [t == at[1] ? x : t for t in ticks[1]])
-        ticks = plt.yticks()
-        plt.yticks(ticks[1], [t == at[2] ? y : t for t in ticks[1]])
-    end
 end
 
 function PyPlot.imshow(A::OffsetArray; kwargs...)
