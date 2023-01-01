@@ -230,7 +230,7 @@ function label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_data=10, bas
         map(which) do w
             lims = getproperty(ax, Symbol(:get_, w, :lim))()
             ticks = [
-                m * base_label^p
+                round(m * base_label^p, sigdigits=5)  # overcome floating point errors
                 for p in floor(lims[1] * log(base_label, base_data)):ceil(lims[2] * log(base_label, base_data))
                 for m in muls
             ]
