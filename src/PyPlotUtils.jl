@@ -23,6 +23,7 @@ export
     keep_plt_lims, set_xylims, lim_intersect, lim_union,
     set_xylabels, xylabels, label_log_scales, draw_text_along, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
+    pcolormesh_ax, plot_ax, fill_between_ax,
     mpl_color, adjust_lightness,
     axplotfunc, add_zoom_patch,
     ScalebarArtist
@@ -208,6 +209,27 @@ function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothi
         isnothing(colorbar.title) || cb.ax.set_title(colorbar.title)
     end
     return mappable
+end
+
+# XXX: generalize somehow? like axiskeys(pcolormesh)(A) or ...?
+
+function pcolormesh_ax(A::KeyedArray; kwargs...)
+    res = plt.pcolormesh(
+        axiskeys(A, 1),
+        axiskeys(A, 2),
+        permutedims(A);
+        kwargs...
+    )
+    set_xylabels(A)
+    res
+end
+
+function plot_ax(A::KeyedArray; kwargs...)
+    plt.plot(only(axiskeys(A)), A; kwargs...)
+end
+
+function fill_between_ax(A::KeyedArray; kwargs...)
+    plt.fill_between(only(axiskeys(A)), leftendpoint.(A), rightendpoint.(A); kwargs...)
 end
 
 """    axplotfunc(f; ax=plt.gca(), n=10, [plot() kwargs...])
