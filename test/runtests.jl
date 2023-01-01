@@ -14,7 +14,7 @@ adjust_lightness(:C0, 1.5)
 
 set_xylims((5 ± 1)^2)
 
-xylabels_compact()
+xylabels_inline()
 
 # imshow([1 2; 3 4])
 # imshow(OffsetArray([1 2; 3 4], -5:-4, 0:1))

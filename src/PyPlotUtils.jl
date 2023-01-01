@@ -13,8 +13,8 @@ using StatsBase: mad
 export
     plt, matplotlib,
     .., ±, ×,
-    pyplot_style!, keep_plt_lims, set_xylims,
-    adjust_lightness, xylabels_compact, colorbar_symlog, imshow_symlog
+    pyplot_style!, keep_plt_lims, set_xylims, xylabels_inline,
+    adjust_lightness, colorbar_symlog, imshow_symlog
 
 get_plt() = pyimport("matplotlib.pyplot")
 get_matplotlib() = pyimport("matplotlib")
@@ -90,13 +90,13 @@ function imshow_symlog(img::KeyedArray; colorbar=true, linthresh=nothing, lims=n
     return im
 end
 
-function xylabels_compact(; x="RA (mas)", y="DEC (mas)")
+function xylabels_inline(; x="RA (mas)", y="DEC (mas)", at=(0, 0))
     keep_plt_lims() do
         plt = get_plt()
         ticks = plt.xticks()
-        plt.xticks(ticks[1], [t == 0 ? x : t for t in ticks[1]])
+        plt.xticks(ticks[1], [t == at[1] ? x : t for t in ticks[1]])
         ticks = plt.yticks()
-        plt.yticks(ticks[1], [t == 0 ? y : t for t in ticks[1]])
+        plt.yticks(ticks[1], [t == at[2] ? y : t for t in ticks[1]])
     end
 end
 
