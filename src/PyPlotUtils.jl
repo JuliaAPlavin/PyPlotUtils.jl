@@ -1,13 +1,10 @@
 module PyPlotUtils
 
 using PyCall
-import PyPlot
 using PyPlot: plt, matplotlib
 using IntervalSets
-using DomainSets
-using DomainSets: ×
+using DomainSets; using DomainSets: ×
 using AxisKeys: KeyedArray, axiskeys, dimnames
-using OffsetArrays: OffsetArray
 using Unitful: Quantity, ustrip, unit
 using StatsBase: mad
 using Colors
@@ -34,20 +31,15 @@ include("legend.jl")
 include("artists.jl")
 
 
-get_plt() = pyimport("matplotlib.pyplot")
-get_matplotlib() = pyimport("matplotlib")
-gca() = get_plt().gca()
-
 """    pyplot_style!()
 Set up matplotlib to follow my preferred (opinionated!) style. """
 function pyplot_style!()
     seaborn = pyimport_conda("seaborn", "seaborn")
     seaborn.set_style("whitegrid", Dict("image.cmap" => "turbo"))
     seaborn.set_color_codes()
-    plt = get_plt()
     plt.rc("grid", alpha=0.4)
     plt.rc("savefig", bbox="tight", pad_inches=0)
-    rcParams = PyDict(get_matplotlib()."rcParams")
+    rcParams = PyDict(matplotlib."rcParams")
     for p in ["text.color", "axes.labelcolor", "xtick.color", "ytick.color"]
         rcParams[p] = "black"
     end
