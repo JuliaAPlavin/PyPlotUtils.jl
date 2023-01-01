@@ -100,11 +100,7 @@ function set_xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantit
     else
         "", ""
     end
-    if dimnames(A) == (:ra, :dec)
-        set_xylabels("RA$(ustrs[1])", "Dec$(ustrs[2])"; kwargs...)
-    else
-        set_xylabels("$(dimnames(A, 1))$(ustrs[1])", "$(dimnames(A, 2))$(ustrs[2])"; kwargs...)
-    end
+    set_xylabels("$(dimnames(A, 1))$(ustrs[1])", "$(dimnames(A, 2))$(ustrs[2])"; kwargs...)
 end
 
 """    set_xylabels(xl, yl; inline=false, at=(0, 0), ax=plt.gca())
