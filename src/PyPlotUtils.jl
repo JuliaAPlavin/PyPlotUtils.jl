@@ -13,7 +13,7 @@ using StatsBase: mad
 using Colors
 using NonNegLeastSquares: nonneg_lsq
 using DataPipes
-using Accessors: @optic, set
+using Accessors
 using LinearAlgebra: tril
 
 
@@ -21,10 +21,11 @@ export
     plt, matplotlib,
     .., ±, ×,
     pyplot_style!,
-    keep_plt_lims, set_xylims, xylims_set, lim_intersect, lim_union,
-    xylabels, legend_inline_right,
+    keep_plt_lims, set_xylims, lim_intersect, lim_union,
+    set_xylabels, xylabels, label_log_scales, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
     mpl_color, adjust_lightness,
+    axplotfunc,
     ScalebarArtist
 
 
@@ -36,6 +37,8 @@ get_plt() = pyimport("matplotlib.pyplot")
 get_matplotlib() = pyimport("matplotlib")
 gca() = get_plt().gca()
 
+"""    pyplot_style!()
+Set up matplotlib to follow my preferred (opinionated!) style. """
 function pyplot_style!()
     seaborn = pyimport_conda("seaborn", "seaborn")
     seaborn.set_style("whitegrid", Dict("image.cmap" => "turbo"))
@@ -49,7 +52,9 @@ function pyplot_style!()
     end
 end
 
-function keep_plt_lims(func, ax=gca(); x=true, y=true)
+"""    keep_plt_lims(func, ax=plt.gca(); x=true, y=true)
+Call `func()` and undo any changes to axis limits it made. """
+function keep_plt_lims(func, ax=plt.gca(); x=true, y=true)
     xl = ax.get_xlim()
     yl = ax.get_ylim()
     res = func()
@@ -59,7 +64,14 @@ function keep_plt_lims(func, ax=gca(); x=true, y=true)
 end
 
 extract_xylims(L::Rectangle) = (@assert dimension(L) == 2; endpoints.(components(L)))
-function xylims_set(L; inv=[], ax=gca())
+
+"""    set_xylims(L::Rectangle; [inv::Symbols], ax=plt.gca())
+
+Set plot limits to the `L` rectangle: e.g. `set_xylims((0 ± 1)^2)`.
+
+Inverts axes specified in `inv`: e.g. `inv=:x`.
+"""
+function set_xylims(L; inv=[], ax=plt.gca())
     xl, yl = extract_xylims(L)
     ax.set_xlim(xl...)
     ax.set_ylim(yl...)
@@ -67,7 +79,6 @@ function xylims_set(L; inv=[], ax=gca())
         getproperty(ax, Symbol(:invert_, k, :axis))()
     end
 end
-const set_xylims = xylims_set  # backwards compatibility
 
 "    lim_intersect(; [x::Interval], [y::Interval])
 Shrink plot limits to the intersection of current limits with passed intervals. "
@@ -83,7 +94,9 @@ function lim_union(; x=nothing, y=nothing)
     !isnothing(y) && plt.ylim(extrema(Interval(plt.ylim()...) ∩ y))
 end
 
-function xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantity, kwargs...)
+"""    set_xylabels(matrix; [unit::Bool], [...])
+Set the `x` and `y` plot labels to `dimnames` of the `matrix`. Assumes that the `matrix` is plotted with `imshow_ax`. """
+function set_xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantity, kwargs...)
     ustrs = if units
         T = eltype.(axiskeys(A))
         " ($(unit(T[1])))", " ($(unit(T[2])))"
@@ -91,13 +104,19 @@ function xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantity, k
         "", ""
     end
     if dimnames(A) == (:ra, :dec)
-        xylabels("RA$(ustrs[1])", "Dec$(ustrs[2])"; kwargs...)
+        set_xylabels("RA$(ustrs[1])", "Dec$(ustrs[2])"; kwargs...)
     else
-        xylabels("$(dimnames(A, 1))$(ustrs[1])", "$(dimnames(A, 2))$(ustrs[2])"; kwargs...)
+        set_xylabels("$(dimnames(A, 1))$(ustrs[1])", "$(dimnames(A, 2))$(ustrs[2])"; kwargs...)
     end
 end
 
-function xylabels(xl, yl; inline=false, at=(0, 0), ax=gca())
+"""    set_xylabels(xl, yl; inline=false, at=(0, 0), ax=plt.gca())
+
+Set the `x` and `y` labels at once, with extra features.
+
+`inline`: put the label instead of a tick label. Replaces ticks at `x=at[1]` and `y=at[2]`.
+"""
+function set_xylabels(xl, yl; inline=false, at=(0, 0), ax=plt.gca())
     if inline
         m = match(r"^([^()]+)\s+(\([^()]+\))$", yl)
         if !isnothing(m)
@@ -116,12 +135,13 @@ function xylabels(xl, yl; inline=false, at=(0, 0), ax=gca())
         ax.set_ylabel(yl)
     end
 end
+const xylabels = set_xylabels  # backwards compatibility
 
 PyCall.PyObject(c::Colorant) = PyObject(mpl_color(c))
 mpl_color(c::Colorant) = mpl_color(convert(RGBA{Float64}, c))
 mpl_color(c::RGBA{Float64}) = (red(c), green(c), blue(c), alpha(c))
-mpl_color(c::Union{Symbol, String, PyObject}) = RGBA(matplotlib.colors.to_rgba(c)...)
-mpl_color(T::Type{<:Colorant}, c::Union{Symbol, String, PyObject}) = convert(T, mpl_color(c))
+mpl_color(c::Union{Symbol, String, PyObject, AbstractVector}) = RGBA(matplotlib.colors.to_rgba(c)...)
+mpl_color(T::Type{<:Colorant}, c::Union{Symbol, String, PyObject, AbstractVector}) = convert(T, mpl_color(c))
 
 function adjust_lightness(color, amount)
     c = get(pyimport("matplotlib.colors").cnames, color, color)
@@ -160,7 +180,18 @@ get_mpl_norm(A, n::SymLog) = let
     )
 end
 
-function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=gca(), norm=nothing, cmap=nothing, background_val=0, kwargs...)
+"""    imshow_ax(A::Matrix, [colorbar::ColorBar]; ax=plt.gca(), [norm], [cmap::Symbol], background_val=0, [...])
+
+Display the `A` matrix as an image, so that plot coordinates of each pixel correspond to its "coordinates" in the matrix.
+
+For `KeyedArray`s `axiskeys(A)` become coordinates. They should be regularly spaced ranges.
+For other arrays `axes(A)` become coordinates. Works with regular `Array`s, `OffsetArray`s, ....
+
+`norm`: a `matplotlib` norm, or an object with `get_mpl_norm(A, norm)` defined. E.g., a `SymLog`.
+
+Extra `kwargs` not listed in the signature are passed to `matplotlib`'s `imshow`.
+"""
+function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothing, cmap=nothing, background_val=0, kwargs...)
     norm = get_mpl_norm(A, norm)
     isnothing(background_val) || ax.set_facecolor(plt.get_cmap(cmap)(norm(background_val)))
     mappable = ax.imshow(
@@ -178,6 +209,34 @@ function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=gca(), norm=nothing, 
         )
         cb = plt.colorbar(mappable; colorbar.label, pad=0.02, cbar_kws...)
         isnothing(colorbar.title) || cb.ax.set_title(colorbar.title)
+    end
+end
+
+"""    axplotfunc(f; ax=plt.gca(), n=10, [plot() kwargs...])
+Plot `y = f(x)` within the current axis limits. Uses `n` points that uniformly split the whole `x` interval. """
+function axplotfunc(f; ax=plt.gca(), n=10, kwargs...)
+	lims = ax.get_xlim()
+	xs = range(minimum(lims), maximum(lims); length=n)
+	keep_plt_lims() do
+		ax.plot(xs, f.(xs); kwargs...)
+	end
+end
+
+"""    label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_label=10, base_data=10)
+Add ticks and their labels assuming that data values are `log(base_data, x)` of actual values.
+"""
+function label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_data=10, base_label=10)
+    keep_plt_lims() do
+        map(which) do w
+            lims = getproperty(ax, Symbol(:get_, w, :lim))()
+            ticks = [
+                m * base_label^p
+                for p in floor(lims[1] * log(base_label, base_data)):ceil(lims[2] * log(base_label, base_data))
+                for m in muls
+            ]
+            getproperty(ax, Symbol(:set_, w, :ticks))(log.(base_data, ticks))
+            getproperty(ax, Symbol(:set_, w, :ticklabels))(ticks)
+        end
     end
 end
 

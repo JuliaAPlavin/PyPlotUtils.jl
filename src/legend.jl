@@ -1,3 +1,5 @@
+"""    legend_inline_right(; [ax=plt.gca()], [fig=plt.gcf()])
+Display a "legend" of all labeled lines and fills on the right of the axes, at the `y` coordinates of the corresponding lines. """
 function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
 	# adapted from https://github.com/nschloe/matplotx/blob/main/src/matplotx/_labels.py
 	ax_pos = ax.get_position()
