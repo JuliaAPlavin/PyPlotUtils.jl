@@ -24,7 +24,7 @@ export
     set_xylabels, xylabels, label_log_scales, draw_text_along, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
     mpl_color, adjust_lightness,
-    axplotfunc,
+    axplotfunc, add_zoom_patch,
     ScalebarArtist
 
 
@@ -256,6 +256,33 @@ function draw_text_along(xy, str::AbstractString, xys; offset_pixels=0, kwargs..
     xy_ = data_to_points.inverted().transform(data_to_points.transform(xy) .+ offset_pixels .* (s, -c))
 
     plt.text(xy_..., str; rotation=trans_angle, va=:top, ha=:center, rotation_mode=:anchor, kwargs...)
+end
+
+"""    add_zoom_patch(axA, axB, dir=:horizontal or :vertical; color=:k)
+
+Connect two axes, `axA` and `axB`, with lines indicating difference of their scales. Also draws a rec
+
+Currently assumes that `axA` has smaller limits, it should be the zoomed in version of `axB`.
+"""
+function add_zoom_patch(axA, axB, dir::Symbol; color=:k)
+    @assert axA.figure == axB.figure
+    fig = axA.figure
+    xl = axA.get_xlim()
+    yl = axA.get_ylim()
+
+    axB.add_artist(matplotlib.patches.Rectangle((xl[1], yl[1]), xl[2] - xl[1], yl[2] - yl[1]; facecolor=:none, edgecolor=color))
+    xys = dir == :horizontal ? [((xl[1], yl[1]), (xl[2], yl[1])), ((xl[1], yl[2]), (xl[2], yl[2]))] :
+          dir == :vertical   ? [((xl[1], yl[1]), (0, 1)), ((xl[2], yl[1]), (1, 1))] :
+          error("unknown dir = $dir")
+    for (xyA, xyB) in xys
+        fig.add_artist(matplotlib.patches.ConnectionPatch(;
+            xyA, xyB,
+            coordsA="data", coordsB="data",
+            axesA=axB, axesB=axA,
+            color, ls=":",
+            zorder=0.1
+        ))
+    end
 end
 
 end
