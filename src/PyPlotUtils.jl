@@ -136,8 +136,8 @@ const xylabels = set_xylabels  # backwards compatibility
 PyCall.PyObject(c::Colorant) = PyObject(mpl_color(c))
 mpl_color(c::Colorant) = mpl_color(convert(RGBA{Float64}, c))
 mpl_color(c::RGBA{Float64}) = (red(c), green(c), blue(c), alpha(c))
-mpl_color(c::Union{Symbol, String, PyObject, AbstractVector}) = RGBA(matplotlib.colors.to_rgba(c)...)
-mpl_color(T::Type{<:Colorant}, c::Union{Symbol, String, PyObject, AbstractVector}) = convert(T, mpl_color(c))
+mpl_color(c::Union{Symbol, String, PyObject, AbstractVector, Tuple{Vararg{Real}}}) = RGBA(matplotlib.colors.to_rgba(c)...)
+mpl_color(T::Type{<:Colorant}, c::Union{Symbol, String, PyObject, AbstractVector, Tuple{Vararg{Real}}}) = convert(T, mpl_color(c))
 
 function adjust_lightness(color, amount)
     c = get(pyimport("matplotlib.colors").cnames, color, color)
