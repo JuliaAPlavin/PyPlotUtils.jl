@@ -84,15 +84,17 @@ end
 "    lim_intersect(; [x::Interval], [y::Interval])
 Shrink plot limits to the intersection of current limits with passed intervals. "
 function lim_intersect(; x=nothing, y=nothing)
-    !isnothing(x) && plt.xlim(extrema(Interval(plt.xlim()...) ∩ x))
-    !isnothing(y) && plt.ylim(extrema(Interval(plt.ylim()...) ∩ y))
+    # XXX: should keep inverted axis
+    !isnothing(x) && plt.xlim(extrema(Interval(extrema(plt.xlim())...) ∩ x))
+    !isnothing(y) && plt.ylim(extrema(Interval(extrema(plt.ylim())...) ∩ y))
 end
 
 "    lim_union(; [x::Interval], [y::Interval])
 Expand plot limits to the union of current limits with passed intervals. "
 function lim_union(; x=nothing, y=nothing)
-    !isnothing(x) && plt.xlim(extrema(Interval(plt.xlim()...) ∩ x))
-    !isnothing(y) && plt.ylim(extrema(Interval(plt.ylim()...) ∩ y))
+    # XXX: should keep inverted axis
+    !isnothing(x) && plt.xlim(extrema(Interval(extrema(plt.xlim())...) ∩ x))
+    !isnothing(y) && plt.ylim(extrema(Interval(extrema(plt.ylim())...) ∩ y))
 end
 
 """    set_xylabels(matrix; [unit::Bool], [...])
@@ -225,6 +227,7 @@ end
 
 """    label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_label=10, base_data=10)
 Add ticks and their labels assuming that data values are `log(base_data, x)` of actual values.
+`which` should contain `x` and/or `y`.
 """
 function label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_data=10, base_label=10)
     keep_plt_lims() do
