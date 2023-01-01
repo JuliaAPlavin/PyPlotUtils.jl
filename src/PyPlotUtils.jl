@@ -3,7 +3,8 @@ module PyPlotUtils
 using PyCall
 using PyPlot: plt, matplotlib
 using IntervalSets
-using DomainSets; using DomainSets: ×
+using DomainSets
+using DomainSets: ×
 using AxisKeys: KeyedArray, axiskeys, dimnames
 using Unitful: Quantity, ustrip, unit
 using StatsBase: mad
@@ -187,9 +188,10 @@ For other arrays `axes(A)` become coordinates. Works with regular `Array`s, `Off
 Extra `kwargs` not listed in the signature are passed to `matplotlib`'s `imshow`.
 """
 function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothing, cmap=nothing, background_val=0, kwargs...)
+    plt.sca(ax)
     norm = get_mpl_norm(A, norm)
     isnothing(background_val) || ax.set_facecolor(plt.get_cmap(cmap)(norm(background_val)))
-    mappable = ax.imshow(
+    mappable = plt.imshow(
         parent(A) |> permutedims;
         origin=:lower, extent=extent_arr(A),
         norm, cmap,
@@ -205,16 +207,17 @@ function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothi
         cb = plt.colorbar(mappable; colorbar.label, pad=0.02, cbar_kws...)
         isnothing(colorbar.title) || cb.ax.set_title(colorbar.title)
     end
+    return mappable
 end
 
 """    axplotfunc(f; ax=plt.gca(), n=10, [plot() kwargs...])
 Plot `y = f(x)` within the current axis limits. Uses `n` points that uniformly split the whole `x` interval. """
 function axplotfunc(f; ax=plt.gca(), n=10, kwargs...)
-	lims = ax.get_xlim()
-	xs = range(minimum(lims), maximum(lims); length=n)
-	keep_plt_lims() do
-		ax.plot(xs, f.(xs); kwargs...)
-	end
+    lims = ax.get_xlim()
+    xs = range(minimum(lims), maximum(lims); length=n)
+    keep_plt_lims() do
+        ax.plot(xs, f.(xs); kwargs...)
+    end
 end
 
 """    label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_label=10, base_data=10)
@@ -241,18 +244,18 @@ Draw text at `xy` and rotate it along the `xys` curve.
 Text is made parallel to the direction between two points in `xys` closest to `xy`.
 """
 function draw_text_along(xy, str::AbstractString, xys; offset_pixels=0, kwargs...)
-	a, b = first(sort(xys; by=p -> hypot((p .- xy)...)), 2)
-	a2b = b .- a
-	angle = atand(a2b[2], a2b[1])
-	trans_angle = plt.gca().transData.transform_angles([angle], reshape(collect(xy), (1, 2)))[1]
-	trans_angle = Circular.center_angle(trans_angle, at=0, range=180)
-	s_, c_ = sincosd(angle)
-	s, c = sincosd(trans_angle)
+    a, b = first(sort(xys; by=p -> hypot((p .- xy)...)), 2)
+    a2b = b .- a
+    angle = atand(a2b[2], a2b[1])
+    trans_angle = plt.gca().transData.transform_angles([angle], reshape(collect(xy), (1, 2)))[1]
+    trans_angle = Circular.center_angle(trans_angle, at=0, range=180)
+    s_, c_ = sincosd(angle)
+    s, c = sincosd(trans_angle)
 
-	data_to_points = plt.gca().transData
-	xy_ = data_to_points.inverted().transform(data_to_points.transform(xy) .+ offset_pixels .* (s, -c))
+    data_to_points = plt.gca().transData
+    xy_ = data_to_points.inverted().transform(data_to_points.transform(xy) .+ offset_pixels .* (s, -c))
 
-	plt.text(xy_..., str; rotation=trans_angle, va=:top, ha=:center, rotation_mode=:anchor, kwargs...)
+    plt.text(xy_..., str; rotation=trans_angle, va=:top, ha=:center, rotation_mode=:anchor, kwargs...)
 end
 
 end
