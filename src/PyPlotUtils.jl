@@ -12,6 +12,7 @@ using Unitful: Quantity, ustrip, unit
 using StatsBase: mad
 using Colors
 using NonNegLeastSquares: nonneg_lsq
+using DirectionalStatistics
 using DataPipes
 using Accessors
 using LinearAlgebra: tril
@@ -22,7 +23,7 @@ export
     .., ±, ×,
     pyplot_style!,
     keep_plt_lims, set_xylims, lim_intersect, lim_union,
-    set_xylabels, xylabels, label_log_scales, legend_inline_right,
+    set_xylabels, xylabels, label_log_scales, draw_text_along, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
     mpl_color, adjust_lightness,
     axplotfunc,
@@ -238,6 +239,25 @@ function label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_data=10, bas
             getproperty(ax, Symbol(:set_, w, :ticklabels))(ticks)
         end
     end
+end
+
+"""    draw_text_along(xy, str, xys; offset_pixels=0, ...)
+Draw text at `xy` and rotate it along the `xys` curve.
+Text is made parallel to the direction between two points in `xys` closest to `xy`.
+"""
+function draw_text_along(xy, str::AbstractString, xys; offset_pixels=0, kwargs...)
+	a, b = first(sort(xys; by=p -> hypot((p .- xy)...)), 2)
+	a2b = b .- a
+	angle = atand(a2b[2], a2b[1])
+	trans_angle = plt.gca().transData.transform_angles([angle], reshape(collect(xy), (1, 2)))[1]
+	trans_angle = Circular.center_angle(trans_angle, at=0, range=180)
+	s_, c_ = sincosd(angle)
+	s, c = sincosd(trans_angle)
+
+	data_to_points = plt.gca().transData
+	xy_ = data_to_points.inverted().transform(data_to_points.transform(xy) .+ offset_pixels .* (s, -c))
+
+	plt.text(xy_..., str; rotation=trans_angle, va=:top, ha=:center, rotation_mode=:anchor, kwargs...)
 end
 
 end
