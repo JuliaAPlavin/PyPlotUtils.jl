@@ -14,13 +14,14 @@ adjust_lightness(:C0, 1.5)
 
 set_xylims((5 ± 1)^2)
 
-xylabels_inline()
+xylabels("a", "b")
+xylabels("a", "b"; inline=true)
+xylabels(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"))
 
-# imshow([1 2; 3 4])
-# imshow(OffsetArray([1 2; 3 4], -5:-4, 0:1))
-# imshow(KeyedArray([1 2; 3 4], a=-5:-4, b=0:1))
-# imshow(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"))
-# imshow(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"s"))
+imshow_ax([1 2; 3 4])
+imshow_ax(OffsetArray([1 2; 3 4], -5:-4, 0:1))
+imshow_ax(KeyedArray([1 2; 3 4], a=-5:-4, b=0:1))
+imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"))
 
 # imshow_symlog(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"))
 # colorbar_symlog(linthresh=5)

@@ -5,15 +5,16 @@ import PyPlot
 using PyPlot: plt, matplotlib
 using IntervalSets
 using DomainSets
-using AxisKeys: KeyedArray, axiskeys
+using AxisKeys: KeyedArray, axiskeys, dimnames
 using OffsetArrays: OffsetArray
-using Unitful: ustrip
+using Unitful: Quantity, ustrip, unit
 using StatsBase: mad
 
 export
     plt, matplotlib,
     .., ±, ×,
-    pyplot_style!, keep_plt_lims, set_xylims, xylabels_inline,
+    pyplot_style!, keep_plt_lims, set_xylims, xylabels,
+    imshow_ax,
     adjust_lightness, colorbar_symlog, imshow_symlog
 
 get_plt() = pyimport("matplotlib.pyplot")
@@ -53,13 +54,33 @@ function set_xylims(L; inv=[])
     end
 end
 
-function xylabels_inline(; x="RA (mas)", y="DEC (mas)", at=(0, 0))
-    keep_plt_lims() do
-        plt = get_plt()
-        ticks = plt.xticks()
-        plt.xticks(ticks[1], [t == at[1] ? x : t for t in ticks[1]])
-        ticks = plt.yticks()
-        plt.yticks(ticks[1], [t == at[2] ? y : t for t in ticks[1]])
+function xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantity, kwargs...)
+    ustr = if units
+        @assert eltype(axiskeys(A, 1)) == eltype(axiskeys(A, 1))
+        T = eltype(axiskeys(A, 1))
+        " ($(unit(T)))"
+    else
+        ""
+    end
+    if dimnames(A) == (:ra, :dec)
+        xylabels("RA$ustr", "Dec$ustr"; kwargs...)
+    else
+        xylabels("$(dimnames(A, 1))$ustr", "$(dimnames(A, 2))$ustr"; kwargs...)
+    end
+end
+
+function xylabels(xl, yl; inline=false, at=(0, 0))
+    if inline
+        keep_plt_lims() do
+            plt = get_plt()
+            ticks = plt.xticks()
+            plt.xticks(ticks[1], [t == at[1] ? xl : t for t in ticks[1]])
+            ticks = plt.yticks()
+            plt.yticks(ticks[1], [t == at[2] ? yl : t for t in ticks[1]])
+        end
+    else
+        get_plt().xlabel(xl)
+        get_plt().ylabel(yl)
     end
 end
 
@@ -100,27 +121,15 @@ function imshow_symlog(img::KeyedArray; colorbar=true, linthresh=nothing, lims=n
     return im
 end
 
-function PyPlot.imshow(A::OffsetArray; kwargs...)
-    PyPlot.imshow(
-        parent(A) |> permutedims, origin=:lower,
-        extent=(
-            Base.axes(A, 1) |> first,
-            Base.axes(A, 1) |> last,
-            Base.axes(A, 2) |> first,
-            Base.axes(A, 2) |> last,
-        );
-        kwargs...
-    )
-end
+extent_ax(a::AbstractRange) = (first(a) - step(a) / 2, last(a) + step(a) / 2)
+extent_ax(a::AbstractRange{<:Quantity}) = extent_ax(ustrip.(a))
+extent_arr(A::AbstractMatrix) = (extent_ax(axes(A, 1))..., extent_ax(axes(A, 2))...)  # regular arrays, OffsetArrays, (...?)
+extent_arr(A::KeyedArray) = (extent_ax(axiskeys(A, 1))..., extent_ax(axiskeys(A, 2))...)
 
-function PyPlot.imshow(A::KeyedArray; kwargs...)
-    PyPlot.imshow(
-        parent(A) |> permutedims, origin=:lower,
-        extent=(
-            axiskeys(A, 1) |> first,
-            axiskeys(A, 1) |> last,
-            axiskeys(A, 2) |> first,
-            axiskeys(A, 2) |> last) .|> ustrip;
+function imshow_ax(A::AbstractMatrix; kwargs...)
+    get_plt().imshow(
+        parent(A) |> permutedims;
+        origin=:lower, extent=extent_arr(A),
         kwargs...
     )
 end
