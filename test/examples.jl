@@ -194,6 +194,17 @@ let
 	plt.gcf()
 end
 
+# ╔═╡ c13cdbdd-05b2-498c-b86b-1dba60e7b678
+let
+	plt.figure()
+	plt.plot(1:30, 3randn(30) ./ (11:40); label="Curve A\nCurve A")
+	plt.plot(1:30, 3randn(30) ./ (11:40); label="Curve B\nCurve B\nCurve B", color="#f304")
+	plt.plot(1:30, 3 .+ randn(30); label="Another curve\nAnother curve\nAnother curve\nAnother curve")
+	plt.fill_between(1:30, 2 .+ randn(30), 6 .+ randn(30); alpha=0.3, label="Filled area", color=:C2)
+	legend_inline_right()
+	plt.gcf()
+end
+
 # ╔═╡ cd3de117-4b80-44f5-aee9-595d435af230
 @doc axplotfunc
 
@@ -272,6 +283,9 @@ let
 	
 	plt.gcf()
 end
+
+# ╔═╡ 4f1249e3-6175-437b-99cc-54b5473ba025
+
 
 # ╔═╡ a85a78af-db46-4891-9885-17d0c30c5243
 
@@ -368,7 +382,7 @@ VLBIData = "~0.3.1"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.0-rc4"
+julia_version = "1.8.1"
 manifest_format = "2.0"
 project_hash = "9e67639ad87ee8c0e69cd87c6f7c234d72041d8d"
 
@@ -386,15 +400,21 @@ version = "1.1.4"
 
 [[deps.Accessors]]
 deps = ["Compat", "CompositionsBase", "ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "MacroTools", "Requires", "Test"]
-git-tree-sha1 = "c877a35749324754d3c8fffb09fc1f9db144ff8f"
+git-tree-sha1 = "ce67f55da3a937bb001a8d00559bdfa4dba6e4f5"
 uuid = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
-version = "0.1.18"
+version = "0.1.20"
+
+[[deps.AccessorsExtra]]
+deps = ["Accessors", "ConstructionBase", "InverseFunctions", "Reexport", "Requires", "StaticArraysCore"]
+git-tree-sha1 = "b51f06b346413f8925472bd968b28cba11049858"
+uuid = "33016aad-b69d-45be-9359-82a41f556fd4"
+version = "0.1.13"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "af92965fb30777147966f58acb05da51c5616b5f"
+git-tree-sha1 = "195c5505521008abea5aee4f96930717958eac6f"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "3.3.3"
+version = "3.4.0"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -402,9 +422,9 @@ version = "1.1.1"
 
 [[deps.ArraysOfArrays]]
 deps = ["Adapt", "ChainRulesCore", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "33177b879bb757a900b035eb8b49b4e8af938572"
+git-tree-sha1 = "c59b725b0aadf7df93fb3de05b5e1b14029af2da"
 uuid = "65a8f2f4-9b39-5baf-92e2-a9cc46fdf018"
-version = "0.6.0"
+version = "0.6.1"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -416,21 +436,21 @@ version = "0.1.3"
 
 [[deps.AstroCatalogUtils]]
 deps = ["Accessors", "AstroAngles", "AstroDataBase", "DataPipes", "DirectionalStatistics", "Distances", "DocStringExtensions", "FlexiJoins", "InverseFunctions", "LinearAlgebra", "NearestNeighbors", "Parameters", "PyFormattedStrings", "Random", "SkyCoords", "StaticArrays", "StructArrays"]
-git-tree-sha1 = "21ed19bf3e2b7a270ddf5fd4189209849c2a38b5"
+git-tree-sha1 = "cbc67b33de482412c8c9eae8cfd95f6005f981bb"
 uuid = "705829cc-62c6-4882-a4ec-bd7361a5ccd3"
-version = "0.4.16"
+version = "0.4.18"
 
 [[deps.AstroDataBase]]
 deps = ["Accessors", "AxisKeys", "DataPipes", "Dates", "OrderedCollections", "SliceThrough"]
-git-tree-sha1 = "fa8525252c819f57214eb432f23cc64e90571fed"
+git-tree-sha1 = "02859ab2dd419875a572d280c7cd8c772d0aa060"
 uuid = "cc88de29-2d75-48be-97ee-dd03a6b97b76"
-version = "0.1.29"
+version = "0.1.32"
 
 [[deps.AxisKeys]]
 deps = ["AbstractFFTs", "ChainRulesCore", "CovarianceEstimation", "IntervalSets", "InvertedIndices", "LazyStack", "LinearAlgebra", "NamedDims", "OffsetArrays", "Statistics", "StatsBase", "Tables"]
-git-tree-sha1 = "945ec1c6b21f166b1f6f3cf628b770c5a253fb73"
+git-tree-sha1 = "d1f8136209ba5e6be961fb54ebe733e7aed5c836"
 uuid = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
-version = "0.2.4"
+version = "0.2.9"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -449,9 +469,9 @@ version = "4.0.0+0"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "80ca332f6dcb2508adba68f22f551adb2d00a624"
+git-tree-sha1 = "e7ff6cadf743c098e08fca25c91103ee4303c9bb"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.15.3"
+version = "1.15.6"
 
 [[deps.ChangesOfVariables]]
 deps = ["ChainRulesCore", "LinearAlgebra", "Test"]
@@ -461,9 +481,9 @@ version = "0.1.4"
 
 [[deps.CodeTracking]]
 deps = ["InteractiveUtils", "UUIDs"]
-git-tree-sha1 = "6d4fa04343a7fc9f9cb9cff9558929f3d2752717"
+git-tree-sha1 = "1833bda4a027f4b2a1c984baddcf755d77266818"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-version = "1.0.9"
+version = "1.1.0"
 
 [[deps.ColorSchemes]]
 deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "Random"]
@@ -491,9 +511,9 @@ version = "0.12.8"
 
 [[deps.Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
-git-tree-sha1 = "924cdca592bc16f14d2f7006754a621735280b74"
+git-tree-sha1 = "5856d3031cdb1f3b2b6340dfdc66b6d9a149a374"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.1.0"
+version = "4.2.0"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -518,26 +538,26 @@ version = "1.7.0"
 
 [[deps.ConstructionBase]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "59d00b3139a9de4eb961057eabb65ac6522be954"
+git-tree-sha1 = "fb21ddd70a051d882a1686a5a550990bbe371a95"
 uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
-version = "1.4.0"
+version = "1.4.1"
 
 [[deps.CovarianceEstimation]]
 deps = ["LinearAlgebra", "Statistics", "StatsBase"]
-git-tree-sha1 = "a3e070133acab996660d31dcf479ea42849e368f"
+git-tree-sha1 = "3c8de95b4e932d76ec8960e12d681eba580e9674"
 uuid = "587fd27a-f159-11e8-2dae-1979310e6154"
-version = "0.2.7"
+version = "0.2.8"
 
 [[deps.DataAPI]]
-git-tree-sha1 = "fb5f5316dd3fd4c5e7c30a24d50643b73e37cd40"
+git-tree-sha1 = "46d2680e618f8abd007bce0c3026cb0c4a8f2032"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
-version = "1.10.0"
+version = "1.12.0"
 
 [[deps.DataPipes]]
 deps = ["Accessors", "SplitApplyCombine"]
-git-tree-sha1 = "16df65e133f714831c9a6fe1aa62dd1cd1d728ba"
+git-tree-sha1 = "ab6b5bf476e9111b0166cc3f8373638204d7fafd"
 uuid = "02685ad9-2d12-40c3-9f73-c6aeda6a7ff5"
-version = "0.2.16"
+version = "0.2.17"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -565,16 +585,16 @@ deps = ["Mmap"]
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 
 [[deps.Dictionaries]]
-deps = ["Indexing", "Random"]
-git-tree-sha1 = "7669d53b75e9f9e2fa32d5215cb2af348b2c13e2"
+deps = ["Indexing", "Random", "Serialization"]
+git-tree-sha1 = "96dc5c5c8994be519ee3420953c931c55657a3f2"
 uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
-version = "0.3.21"
+version = "0.3.24"
 
 [[deps.DirectionalStatistics]]
-deps = ["Accessors", "IntervalSets", "InverseFunctions", "LinearAlgebra", "Statistics", "StatsBase"]
-git-tree-sha1 = "6115320dc2a15ab0f5916bcadf27c17f683df8ce"
+deps = ["AccessorsExtra", "IntervalSets", "InverseFunctions", "LinearAlgebra", "Statistics", "StatsBase"]
+git-tree-sha1 = "d19b31926366b9bfbf3ece656de8d211b3b15299"
 uuid = "e814f24e-44b0-11e9-2fd5-aba2b6113d95"
-version = "0.1.15"
+version = "0.1.20"
 
 [[deps.Distances]]
 deps = ["LinearAlgebra", "SparseArrays", "Statistics", "StatsAPI"]
@@ -588,15 +608,15 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
-git-tree-sha1 = "c5544d8abb854e306b7b2f799ab31cdba527ccae"
+git-tree-sha1 = "5158c2b41018c5f7eb1470d558127ac274eca0c9"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-version = "0.9.0"
+version = "0.9.1"
 
 [[deps.DomainSets]]
-deps = ["CompositeTypes", "IntervalSets", "LinearAlgebra", "StaticArrays", "Statistics"]
-git-tree-sha1 = "ac425eea956013b51e7891bef3c33684b7d37029"
+deps = ["CompositeTypes", "IntervalSets", "LinearAlgebra", "Random", "StaticArrays", "Statistics"]
+git-tree-sha1 = "dc45fbbe91d6d17a8e187abad39fb45963d97388"
 uuid = "5b8099bc-c8ec-5219-889f-1d9e522a28bf"
-version = "0.5.11"
+version = "0.5.13"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -605,9 +625,9 @@ version = "1.6.0"
 
 [[deps.FITSIO]]
 deps = ["CFITSIO", "Printf", "Reexport", "Tables"]
-git-tree-sha1 = "e6033823834ec0070125120d4d4a1234f1826a47"
+git-tree-sha1 = "3b342f0c3bb37371e1e2ad37672a9c960f9abcb6"
 uuid = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
-version = "0.16.12"
+version = "0.17.0"
 
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
@@ -619,10 +639,16 @@ uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.4"
 
 [[deps.FlexiJoins]]
-deps = ["Accessors", "ArraysOfArrays", "DataAPI", "DataPipes", "IntervalSets", "NearestNeighbors", "Requires", "SplitApplyCombine", "Static", "StructArrays", "Tables"]
-git-tree-sha1 = "9a78ca581306ab229acc3337c0f3900e6cd173e4"
+deps = ["Accessors", "ArraysOfArrays", "DataAPI", "DataPipes", "FlexiMaps", "IntervalSets", "NearestNeighbors", "Requires", "SentinelViews", "StaticArrays", "StructArrays"]
+git-tree-sha1 = "15299a39ca639f3c317662cba75767eed0a69073"
 uuid = "e37f2e79-19fa-4eb7-8510-b63b51fe0a37"
-version = "0.1.23"
+version = "0.1.27"
+
+[[deps.FlexiMaps]]
+deps = ["Accessors", "InverseFunctions"]
+git-tree-sha1 = "006f73dc1cf09257f5dc443a047f7f0942803e38"
+uuid = "6394faf6-06db-4fa8-b750-35ccc60383f7"
+version = "0.1.3"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -642,11 +668,6 @@ git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.2"
 
-[[deps.IfElse]]
-git-tree-sha1 = "debdd00ffef04665ccbb3e150747a77560e8fad1"
-uuid = "615f187c-cbe4-4ef1-ba3b-2fcf58d6d173"
-version = "0.1.1"
-
 [[deps.Indexing]]
 git-tree-sha1 = "ce1566720fd6b19ff3411404d4b977acd4814f9f"
 uuid = "313cdc1a-70c2-5d6a-ae34-0150d3930a38"
@@ -664,15 +685,15 @@ version = "0.1.7"
 
 [[deps.IntervalSets]]
 deps = ["Dates", "Random", "Statistics"]
-git-tree-sha1 = "57af5939800bce15980bddd2426912c4f83012d8"
+git-tree-sha1 = "3f91cd3f56ea48d4d2a75c2a65455c5fc74fa347"
 uuid = "8197267c-284f-5f27-9208-e0e47529a953"
-version = "0.7.1"
+version = "0.7.3"
 
 [[deps.InverseFunctions]]
 deps = ["Test"]
-git-tree-sha1 = "b3364212fb5d870f724876ffcd34dd8ec6d98918"
+git-tree-sha1 = "49510dfcb407e572524ba94aeae2fced1f3feb0f"
 uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
-version = "0.1.7"
+version = "0.1.8"
 
 [[deps.InvertedIndices]]
 git-tree-sha1 = "bee5f1ef5bf65df56bdd2e40447590b272a5471f"
@@ -703,9 +724,9 @@ version = "0.21.3"
 
 [[deps.JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "52617c41d2761cc05ed81fe779804d3b7f14fff7"
+git-tree-sha1 = "0f960b1404abb0b244c1ece579a0ec78d056a5d1"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.9.13"
+version = "0.9.15"
 
 [[deps.LaTeXStrings]]
 git-tree-sha1 = "f2355693d6778a178ade15952b7ac47a4ff97996"
@@ -713,10 +734,10 @@ uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 version = "1.3.0"
 
 [[deps.LazyStack]]
-deps = ["LinearAlgebra", "NamedDims", "OffsetArrays", "Test", "ZygoteRules"]
-git-tree-sha1 = "a8bf67afad3f1ee59d367267adb7c44ccac7fdee"
+deps = ["ChainRulesCore", "LinearAlgebra", "NamedDims", "OffsetArrays"]
+git-tree-sha1 = "2eb4a5bf2eb0519ebf40c797ba5637d327863637"
 uuid = "1fad7336-0346-5a1a-a56f-a06ba010965b"
-version = "0.0.7"
+version = "0.0.8"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -746,9 +767,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LogExpFunctions]]
 deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "7c88f63f9f0eb5929f15695af9a4d7d3ed278a91"
+git-tree-sha1 = "94d9c52ca447e23eac0c0f074effbcd38830deb5"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.16"
+version = "0.3.18"
 
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -789,15 +810,15 @@ version = "2022.2.1"
 
 [[deps.NamedDims]]
 deps = ["AbstractFFTs", "ChainRulesCore", "CovarianceEstimation", "LinearAlgebra", "Pkg", "Requires", "Statistics"]
-git-tree-sha1 = "467b53bf3c1f5f0612e0bc430b7afedc64652822"
+git-tree-sha1 = "f39537cbe1cf4f407e65bdf7aca6b04f5877fbb1"
 uuid = "356022a1-0364-5f58-8944-0da4b18d706f"
-version = "0.2.49"
+version = "1.1.0"
 
 [[deps.NearestNeighbors]]
 deps = ["Distances", "StaticArrays"]
-git-tree-sha1 = "0e353ed734b1747fc20cd4cba0edd9ac027eff6a"
+git-tree-sha1 = "440165bf08bc500b8fe4a7be2dc83271a00c0716"
 uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
-version = "0.4.11"
+version = "0.4.12"
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
@@ -844,9 +865,9 @@ version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "0044b23da09b5608b4ecacb4e5e6c6332f833a7e"
+git-tree-sha1 = "3d5bf43e3e8b412656404ed9466f1dcbf7c50269"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.3.2"
+version = "2.4.0"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -855,9 +876,9 @@ version = "1.8.0"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
-git-tree-sha1 = "8d1f54886b9037091edf146b517989fc4a09efec"
+git-tree-sha1 = "2777a5c2c91b3145f5aa75b61bb4c2eb38797136"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.39"
+version = "0.7.43"
 
 [[deps.Preferences]]
 deps = ["TOML"]
@@ -871,9 +892,9 @@ uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [[deps.PyCall]]
 deps = ["Conda", "Dates", "Libdl", "LinearAlgebra", "MacroTools", "Serialization", "VersionParsing"]
-git-tree-sha1 = "1fc929f47d7c151c839c5fc1375929766fb8edcc"
+git-tree-sha1 = "53b8b07b721b77144a0fbbbc2675222ebf40a02d"
 uuid = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
-version = "1.93.1"
+version = "1.94.1"
 
 [[deps.PyFormattedStrings]]
 deps = ["Printf"]
@@ -883,15 +904,15 @@ version = "0.1.10"
 
 [[deps.PyPlot]]
 deps = ["Colors", "LaTeXStrings", "PyCall", "Sockets", "Test", "VersionParsing"]
-git-tree-sha1 = "14c1b795b9d764e1784713941e787e1384268103"
+git-tree-sha1 = "f9d953684d4d21e947cb6d642db18853d43cb027"
 uuid = "d330b81b-6aea-500a-939a-2ce795aea3ee"
-version = "2.10.0"
+version = "2.11.0"
 
 [[deps.PyPlotUtils]]
-deps = ["Accessors", "AxisKeys", "Colors", "DataPipes", "DirectionalStatistics", "DomainSets", "IntervalSets", "LinearAlgebra", "NonNegLeastSquares", "PyCall", "PyPlot", "StatsBase", "Unitful"]
-path = "../../home/aplavin/.julia/dev/PyPlotUtils"
+deps = ["Accessors", "AxisKeys", "Colors", "DataPipes", "DirectionalStatistics", "DomainSets", "FlexiMaps", "IntervalSets", "LinearAlgebra", "NonNegLeastSquares", "PyCall", "PyPlot", "StatsBase", "Unitful"]
+path = "../../home/aplavin/work/.julia/dev/PyPlotUtils"
 uuid = "5384e752-6c47-47b3-86ac-9d091b110b31"
-version = "0.1.15"
+version = "0.1.18"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -922,14 +943,19 @@ version = "3.3.4"
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
 
+[[deps.SentinelViews]]
+git-tree-sha1 = "c7bff02ae89fd4cd0445bc7973470e830e656334"
+uuid = "1c95a9c1-8e3f-460f-8963-106dcc440218"
+version = "0.1.0"
+
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
 [[deps.SkyCoords]]
 deps = ["AstroAngles", "ConstructionBase", "StaticArrays"]
-git-tree-sha1 = "3302abfbde42db0c029e86d6155775b474a536d3"
+git-tree-sha1 = "34feabcf18cb18bd2080be7fc8e681b63a0e57ed"
 uuid = "fc659fc5-75a3-5475-a2ea-3da92c065361"
-version = "1.0.1"
+version = "1.0.2"
 
 [[deps.SliceThrough]]
 deps = ["Accessors", "AxisKeys", "DataPipes", "IntervalSets", "SplitApplyCombine", "StructArrays"]
@@ -962,22 +988,16 @@ git-tree-sha1 = "48f393b0231516850e39f6c756970e7ca8b77045"
 uuid = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
 version = "1.2.2"
 
-[[deps.Static]]
-deps = ["IfElse"]
-git-tree-sha1 = "f94f9d627ba3f91e41a815b9f9f977d729e2e06f"
-uuid = "aedffcd0-7271-4cad-89d0-dc628f76c6d3"
-version = "0.7.6"
-
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "23368a3313d12a2326ad0035f0db0c0966f438ef"
+git-tree-sha1 = "f86b3a049e5d05227b10e15dbb315c5b90f14988"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.5.2"
+version = "1.5.9"
 
 [[deps.StaticArraysCore]]
-git-tree-sha1 = "66fe9eb253f910fe8cf161953880cfdaef01cdf0"
+git-tree-sha1 = "6b7ba252635a5eff6a0b0664a41ee140a1c9e72a"
 uuid = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
-version = "1.0.1"
+version = "1.4.0"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -985,21 +1005,21 @@ uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "2c11d7290036fe7aac9038ff312d3b3a2a5bf89e"
+git-tree-sha1 = "f9af7f195fb13589dd2e2d57fdb401717d2eb1f6"
 uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
-version = "1.4.0"
+version = "1.5.0"
 
 [[deps.StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "472d044a1c8df2b062b23f222573ad6837a615ba"
+git-tree-sha1 = "d1bf48bfcc554a3761a133fe3a9bb01488e06916"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.33.19"
+version = "0.33.21"
 
 [[deps.StructArrays]]
-deps = ["Adapt", "DataAPI", "StaticArrays", "Tables"]
-git-tree-sha1 = "ec47fb6069c57f1cee2f67541bf8f23415146de7"
+deps = ["Adapt", "DataAPI", "StaticArraysCore", "Tables"]
+git-tree-sha1 = "8c6ac65ec9ab781af05b08ff305ddc727c25f680"
 uuid = "09ab397b-f2b6-538f-b94a-2f83cf4a842a"
-version = "0.6.11"
+version = "0.6.12"
 
 [[deps.TOML]]
 deps = ["Dates"]
@@ -1014,9 +1034,9 @@ version = "1.0.1"
 
 [[deps.Tables]]
 deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits", "Test"]
-git-tree-sha1 = "5ce79ce186cc678bbb5c5681ca3379d1ddae11a1"
+git-tree-sha1 = "2d7164f7b8a066bcfa6224e67736ce0eb54aef5b"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.7.0"
+version = "1.9.0"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
@@ -1064,15 +1084,15 @@ version = "0.6.2"
 
 [[deps.UnitfulAstro]]
 deps = ["Unitful", "UnitfulAngles"]
-git-tree-sha1 = "c4e1c470a94063b911fd1b1a204cd2bb34a8cd15"
+git-tree-sha1 = "05adf5e3a3bd1038dd50ff6760cddd42380a7260"
 uuid = "6112ee07-acf9-5e0f-b108-d242c714bf9f"
-version = "1.1.1"
+version = "1.2.0"
 
 [[deps.VLBIData]]
-deps = ["AxisKeys", "DataPipes", "DateFormats", "Dates", "DelimitedFiles", "FITSIO", "InterferometricModels", "PyCall", "PyFormattedStrings", "Reexport", "StaticArrays", "StructArrays", "Tables", "Unitful", "UnitfulAngles", "UnitfulAstro"]
-git-tree-sha1 = "7b1ceba291099cdc9cbe9662112bb2a08303ee89"
+deps = ["AxisKeys", "DataPipes", "DateFormats", "Dates", "DelimitedFiles", "FITSIO", "FlexiMaps", "InterferometricModels", "PyCall", "PyFormattedStrings", "Reexport", "StaticArrays", "StructArrays", "Tables", "Unitful", "UnitfulAngles", "UnitfulAstro"]
+git-tree-sha1 = "284696a07a52b80d1709fdfd641de5fe6e390bfd"
 uuid = "679fc9cc-3e84-11e9-251b-cbd013bd8115"
-version = "0.3.10"
+version = "0.3.12"
 
 [[deps.VersionParsing]]
 git-tree-sha1 = "58d6e80b4ee071f5efd07fda82cb9fbe17200868"
@@ -1083,12 +1103,6 @@ version = "1.3.0"
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
 version = "1.2.12+3"
-
-[[deps.ZygoteRules]]
-deps = ["MacroTools"]
-git-tree-sha1 = "8c1a8e4dfacb1fd631745552c8db35d0deb09ea0"
-uuid = "700de1a5-db45-46bc-99cf-38207098b444"
-version = "0.2.2"
 
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
@@ -1125,6 +1139,7 @@ version = "17.4.0+0"
 # ╠═77dd7281-7fa2-492b-908e-e819b09a078b
 # ╟─c95d28bd-5ad5-4f40-b57c-02f039951a8c
 # ╠═dabeff3d-f0eb-47c7-be65-f47a19201597
+# ╠═c13cdbdd-05b2-498c-b86b-1dba60e7b678
 # ╟─cd3de117-4b80-44f5-aee9-595d435af230
 # ╠═ac5012ec-2666-4d5d-956a-223142fc3441
 # ╠═2ca3ab3b-2c63-411f-8968-d2cde2c0c8ac
@@ -1135,6 +1150,7 @@ version = "17.4.0+0"
 # ╠═8739c218-bfdd-4a02-85f7-bffeec4f1530
 # ╠═0ecf5c27-6d6e-4a22-9979-f1f9b9a5396b
 # ╠═43a144d7-ecae-4629-acc1-ad97d0fe8227
+# ╠═4f1249e3-6175-437b-99cc-54b5473ba025
 # ╠═a85a78af-db46-4891-9885-17d0c30c5243
 # ╠═481829a3-8aa7-4ac9-8d67-99a366a541f9
 # ╠═6c28142a-61b5-4391-93b4-7f6aa65479ff

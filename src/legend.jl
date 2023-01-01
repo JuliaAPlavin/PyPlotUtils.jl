@@ -47,8 +47,9 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
             @reset r.color = alphacolor(r.color, 1)
         end
         @aside isempty(__) && return
-        @aside min_dist = 1.7 * fontsize_axunits * maximum(x -> length(split(x.label, '\n')), __)
-        move_min_distance(__, @optic(_.xy[2]); min_dist)
+        @aside nlines = map(x -> length(split(x.label, '\n')), __)
+        @aside @_ min_dists = 1.7 * fontsize_axunits * [(nlines[begin:end-1] + nlines[begin+1:end]) / 2; nlines[end]]
+        move_min_distance(__, @optic(_.xy[2]); min_dists)
         map() do _
             plt.text(
                 1.01, _.xy[2], _.label;
@@ -58,17 +59,17 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
     end
 end
 
-function move_min_distance(targets, o; min_dist::Real)
+function move_min_distance(targets, o; min_dists)
     IX = sortperm(targets; by=o)
     targets_sort = targets[IX]
 
     n = length(targets)
-    x0_min = o(first(targets_sort)) - n * min_dist
+    x0_min = o(first(targets_sort)) - sum(min_dists)
     A = tril(ones(n, n))
-    b = o.(targets_sort) .- (x0_min .+ (0:(n-1)) .* min_dist)
+    b = o.(targets_sort) .- (x0_min .+ [0; cumsum(min_dists)[begin:end-1]])
 
     out = nonneg_lsq(A, b) |> vec
-    sol = cumsum(out) .+ x0_min .+ (0:(n-1)) .* min_dist
+    sol = cumsum(out) .+ x0_min .+ [0; cumsum(min_dists)[begin:end-1]]
 
     map(targets, sol[invperm(IX)]) do tgt, x
         set(tgt, o, x)
