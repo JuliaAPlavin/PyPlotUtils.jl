@@ -95,7 +95,7 @@ end
 
 # ╔═╡ 98187a4d-40c9-4aaa-a51f-def814fb7194
 let
-	fig, ax = plt.subplots(1, 4, figsize=(15, 3))
+	fig, ax = plt.subplots(1, 4, figsize=(15, 6))
 	xs = @p [0:1e-5:1e-3; 0:1e-3:0.1; 0:0.1:10; 0.10:1000] |> sort |> filter(_ > 0)
 	ys = sin.(1 ./ xs)
 	for (i, a) in ax |> enumerate
@@ -103,6 +103,9 @@ let
 		plt.plot(ys, xs)
 		plt.ylim(0, [1e-3, 0.1, 10, 1000][i])
 		plt.gca().add_artist(ScalebarArtist([(1, "x"), (100, x -> x > 1e3 ? f"{x/1e3:d} km" : f"{x} m")]; which=:y))
+	end
+	for (a, b) in zip(ax[1:end-1], ax[2:end])
+		add_zoom_patch(a, b, :horizontal)
 	end
 	plt.gcf()
 end
@@ -231,12 +234,6 @@ let
 	plt.gcf()
 end
 
-# ╔═╡ 6c8cf8bb-27ff-4d58-97fb-6c93b9dadf8f
-
-
-# ╔═╡ 5becd57e-9eb4-4697-99ca-2ba14ae03cbc
-
-
 # ╔═╡ 89d9a38c-6290-4233-95ae-018cd1b200b6
 let
 	plt.figure()
@@ -276,10 +273,7 @@ let
 	plt.gcf()
 end
 
-# ╔═╡ 1f02b8d6-6018-43e8-b4ff-f1a32d0deafd
-
-
-# ╔═╡ 5f8b4265-1a6e-4d06-968e-faa77ae828bd
+# ╔═╡ a85a78af-db46-4891-9885-17d0c30c5243
 
 
 # ╔═╡ 481829a3-8aa7-4ac9-8d67-99a366a541f9
@@ -374,9 +368,9 @@ VLBIData = "~0.3.1"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.0-rc3"
+julia_version = "1.8.0-rc4"
 manifest_format = "2.0"
-project_hash = "d93a44fd69a8b278b5f5ceaffb9cbc434e17944f"
+project_hash = "9e67639ad87ee8c0e69cd87c6f7c234d72041d8d"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -732,7 +726,7 @@ version = "0.6.3"
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "7.83.1+1"
+version = "7.84.0+0"
 
 [[deps.LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
@@ -897,7 +891,7 @@ version = "2.10.0"
 deps = ["Accessors", "AxisKeys", "Colors", "DataPipes", "DirectionalStatistics", "DomainSets", "IntervalSets", "LinearAlgebra", "NonNegLeastSquares", "PyCall", "PyPlot", "StatsBase", "Unitful"]
 path = "../../home/aplavin/.julia/dev/PyPlotUtils"
 uuid = "5384e752-6c47-47b3-86ac-9d091b110b31"
-version = "0.1.13"
+version = "0.1.15"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -1104,7 +1098,7 @@ version = "5.1.1+0"
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.47.0+0"
+version = "1.48.0+0"
 
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1136,15 +1130,12 @@ version = "17.4.0+0"
 # ╠═2ca3ab3b-2c63-411f-8968-d2cde2c0c8ac
 # ╟─afbe870a-7333-41ae-bad8-1755a775d71d
 # ╠═cd2c4fbd-6212-4e83-88fa-5af966d36335
-# ╠═6c8cf8bb-27ff-4d58-97fb-6c93b9dadf8f
-# ╠═5becd57e-9eb4-4697-99ca-2ba14ae03cbc
 # ╠═89d9a38c-6290-4233-95ae-018cd1b200b6
 # ╠═25907b7a-f3a2-4d9d-b294-68a5069d7e55
 # ╠═8739c218-bfdd-4a02-85f7-bffeec4f1530
 # ╠═0ecf5c27-6d6e-4a22-9979-f1f9b9a5396b
 # ╠═43a144d7-ecae-4629-acc1-ad97d0fe8227
-# ╠═1f02b8d6-6018-43e8-b4ff-f1a32d0deafd
-# ╠═5f8b4265-1a6e-4d06-968e-faa77ae828bd
+# ╠═a85a78af-db46-4891-9885-17d0c30c5243
 # ╠═481829a3-8aa7-4ac9-8d67-99a366a541f9
 # ╠═6c28142a-61b5-4391-93b4-7f6aa65479ff
 # ╠═242110bc-76c0-11ec-0187-9d409aa82de8

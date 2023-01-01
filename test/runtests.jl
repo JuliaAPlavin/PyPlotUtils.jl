@@ -51,6 +51,8 @@ let xys = map(t -> (1.5 - cos(t), sin(t)), 0:0.1:2π)
     draw_text_along((2, 1), "abc", xys; offset_pixels=5, color=:green)
 end
 
+add_zoom_patch(plt.gca(), plt.gca(), :horizontal)
+
 
 import CompatHelperLocal as CHL
 CHL.@check()
