@@ -22,9 +22,8 @@ imshow_ax([1 2; 3 4])
 imshow_ax(OffsetArray([1 2; 3 4], -5:-4, 0:1))
 imshow_ax(KeyedArray([1 2; 3 4], a=-5:-4, b=0:1))
 imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"))
-
-# imshow_symlog(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"))
-# colorbar_symlog(linthresh=5)
+imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"), ColorBar())
+imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"), ColorBar(); norm=SymLog())
 
 import CompatHelperLocal as CHL
 CHL.@check()

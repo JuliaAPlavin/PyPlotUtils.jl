@@ -14,8 +14,8 @@ export
     plt, matplotlib,
     .., ±, ×,
     pyplot_style!, keep_plt_lims, set_xylims, xylabels,
-    imshow_ax,
-    adjust_lightness, colorbar_symlog, imshow_symlog
+    imshow_ax, SymLog, ColorBar,
+    adjust_lightness
 
 get_plt() = pyimport("matplotlib.pyplot")
 get_matplotlib() = pyimport("matplotlib")
@@ -55,17 +55,18 @@ function set_xylims(L; inv=[])
 end
 
 function xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantity, kwargs...)
-    ustr = if units
+    ustrx = if units
         @assert eltype(axiskeys(A, 1)) == eltype(axiskeys(A, 1))
         T = eltype(axiskeys(A, 1))
         " ($(unit(T)))"
     else
         ""
     end
+    ustry = isempty(ustrx) ? "" : "\n$ustrx"
     if dimnames(A) == (:ra, :dec)
-        xylabels("RA$ustr", "Dec$ustr"; kwargs...)
+        xylabels("RA$ustrx", "Dec$ustry"; kwargs...)
     else
-        xylabels("$(dimnames(A, 1))$ustr", "$(dimnames(A, 2))$ustr"; kwargs...)
+        xylabels("$(dimnames(A, 1))$ustrx", "$(dimnames(A, 2))$ustry"; kwargs...)
     end
 end
 
@@ -90,48 +91,56 @@ function adjust_lightness(color, amount)
     return pyimport("colorsys").hls_to_rgb(c[1], max(0, min(1, amount * c[2])), c[3])
 end
 
-function colorbar_symlog(; linthresh, label=nothing, title=nothing)
-    plt = get_plt()
-    mpl = get_matplotlib()
-    cb = plt.colorbar(;
-        ticks=mpl.ticker.SymmetricalLogLocator(; subs=[1, 2, 5], base=10, linthresh),
-        format=mpl.ticker.FuncFormatter((x, ix) -> (ix == 1 || ix % 10 == 0) ? string(round(x, sigdigits=1)) : ""),
-#         format=mpl.ticker.FuncFormatter((x, ix) -> ix == 1 || ix % 10 == 0 ? (x == 0 ? "0" : abs(x) < 1 ? replace(f"{x * 1e3} m", ".0 " => " ") : f"{x:d}") : ""),
-        label,
-    )
-    isnothing(title) || cb.ax.set_title(title)
-    return cb
-end
-
-function imshow_symlog(img::KeyedArray; colorbar=true, linthresh=nothing, lims=nothing, nsigma=10, cmap=nothing, vmin=nothing, vmax=nothing, inv_x=true)
-    plt = get_plt()
-    mpl = get_matplotlib()
-    plt.gca().set_aspect(:equal)
-    plt.gca().set_facecolor(plt.get_cmap(cmap)(0))
-    linthresh = linthresh == nothing ? mad(img, normalize=true) * nsigma : linthresh
-    norm = mpl.colors.SymLogNorm(
-        linthresh,
-        vmin=something(vmin, minimum(img)), vmax=something(vmax, maximum(img)),
-        base=ℯ)  # consistent with mpl before 3.4; in 3.4 default base becomes 10
-    im = PyPlot.imshow(img; norm, cmap)
-    if colorbar
-        colorbar_symlog(; linthresh)
-    end
-    set_xylims(lims; inv_x)
-    return im
-end
-
 extent_ax(a::AbstractRange) = (first(a) - step(a) / 2, last(a) + step(a) / 2)
 extent_ax(a::AbstractRange{<:Quantity}) = extent_ax(ustrip.(a))
 extent_arr(A::AbstractMatrix) = (extent_ax(axes(A, 1))..., extent_ax(axes(A, 2))...)  # regular arrays, OffsetArrays, (...?)
 extent_arr(A::KeyedArray) = (extent_ax(axiskeys(A, 1))..., extent_ax(axiskeys(A, 2))...)
 
-function imshow_ax(A::AbstractMatrix; kwargs...)
+
+Base.@kwdef struct ColorBar
+    unit = nothing
+    title = nothing
+    label = nothing
+end
+
+Base.@kwdef struct SymLog
+    linthresh = nothing
+    nσ = 15
+    vmin = nothing
+    vmax = nothing
+end
+
+get_mpl_norm(A, n::Nothing) = matplotlib.colors.Normalize(vmin=minimum(A), vmax=maximum(A))
+get_mpl_norm(A, n::PyObject) = n
+get_mpl_norm(A, n::SymLog) = let
+    linthresh = @something(n.linthresh, mad(A, normalize=true) * n.nσ)
+    norm = matplotlib.colors.SymLogNorm(
+        linthresh,
+        vmin=@something(n.vmin, minimum(A)),
+        vmax=@something(n.vmax, maximum(A)),
+        base=ℯ  # before mpl 3.4: default base is ℯ; mpl 3.4+: default base is 10
+    )
+end
+
+function imshow_ax(A::AbstractMatrix, colorbar=nothing; norm=nothing, cmap=nothing, background_val=0, kwargs...)
+    norm = get_mpl_norm(A, norm)
+    isnothing(background_val) || plt.gca().set_facecolor(plt.get_cmap(cmap)(norm(background_val)))
     get_plt().imshow(
         parent(A) |> permutedims;
         origin=:lower, extent=extent_arr(A),
+        norm, cmap,
         kwargs...
     )
+    if !isnothing(colorbar)
+        cbar_kws = hasproperty(norm, :linthresh) ? (
+            ticks=matplotlib.ticker.SymmetricalLogLocator(; subs=[1, 2, 5], base=10, norm.linthresh),
+            format=matplotlib.ticker.EngFormatter(unit=string(something(colorbar.unit, "")), places=0, sep=" "),
+        ) : (
+            format=matplotlib.ticker.EngFormatter(unit=string(something(colorbar.unit, "")), places=0, sep=" "),
+        )
+        cb = plt.colorbar(; colorbar.label, pad=0.02, cbar_kws...)
+        isnothing(colorbar.title) || cb.ax.set_title(colorbar.title)
+    end
 end
 
 end
