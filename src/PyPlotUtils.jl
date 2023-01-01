@@ -21,6 +21,7 @@ export
 
 get_plt() = pyimport("matplotlib.pyplot")
 get_matplotlib() = pyimport("matplotlib")
+gca() = get_plt().gca()
 
 function pyplot_style!()
     seaborn = pyimport_conda("seaborn", "seaborn")
@@ -35,8 +36,7 @@ function pyplot_style!()
     end
 end
 
-function keep_plt_lims(func, ax=nothing; x=true, y=true)
-    ax = something(ax, get_plt().gca())
+function keep_plt_lims(func, ax=gca(); x=true, y=true)
     xl = ax.get_xlim()
     yl = ax.get_ylim()
     res = func()
@@ -46,9 +46,8 @@ function keep_plt_lims(func, ax=nothing; x=true, y=true)
 end
 
 extract_xylims(L::Rectangle) = (@assert dimension(L) == 2; endpoints.(components(L)))
-function set_xylims(L; inv=[])
+function set_xylims(L; inv=[], ax=gca())
     xl, yl = extract_xylims(L)
-    ax = get_plt().gca()
     ax.set_xlim(xl...)
     ax.set_ylim(yl...)
     for k in [inv;]
@@ -57,33 +56,36 @@ function set_xylims(L; inv=[])
 end
 
 function xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantity, kwargs...)
-    ustrx = if units
-        @assert eltype(axiskeys(A, 1)) == eltype(axiskeys(A, 1))
-        T = eltype(axiskeys(A, 1))
-        " ($(unit(T)))"
+    ustrs = if units
+        T = eltype.(axiskeys(A))
+        " ($(unit(T[1])))", " ($(unit(T[2])))"
     else
-        ""
+        "", ""
     end
-    ustry = isempty(ustrx) ? "" : "\n$ustrx"
     if dimnames(A) == (:ra, :dec)
-        xylabels("RA$ustrx", "Dec$ustry"; kwargs...)
+        xylabels("RA$(ustrs[1])", "Dec$(ustrs[2])"; kwargs...)
     else
-        xylabels("$(dimnames(A, 1))$ustrx", "$(dimnames(A, 2))$ustry"; kwargs...)
+        xylabels("$(dimnames(A, 1))$(ustrs[1])", "$(dimnames(A, 2))$(ustrs[2])"; kwargs...)
     end
 end
 
-function xylabels(xl, yl; inline=false, at=(0, 0))
+function xylabels(xl, yl; inline=false, at=(0, 0), ax=gca())
     if inline
-        keep_plt_lims() do
-            plt = get_plt()
-            ticks = plt.xticks()
-            plt.xticks(ticks[1], [t == at[1] ? xl : t for t in ticks[1]])
-            ticks = plt.yticks()
-            plt.yticks(ticks[1], [t == at[2] ? yl : t for t in ticks[1]])
+        m = match(r"^([^()]+)\s+(\([^()]+\))$", yl)
+        if !isnothing(m)
+            yl = "$(m[1])\n$(m[2])"
+        end
+        keep_plt_lims(ax) do
+            ticks = ax.get_xticks()
+            ax.set_xticks(ticks)
+            ax.set_xticklabels([t == at[1] ? xl : t for t in ticks])
+            ticks = ax.get_yticks()
+            ax.set_yticks(ticks)
+            ax.set_yticklabels([t == at[2] ? yl : t for t in ticks])
         end
     else
-        get_plt().xlabel(xl)
-        get_plt().ylabel(yl)
+        ax.set_xlabel(xl)
+        ax.set_ylabel(yl)
     end
 end
 
@@ -130,10 +132,10 @@ get_mpl_norm(A, n::SymLog) = let
     )
 end
 
-function imshow_ax(A::AbstractMatrix, colorbar=nothing; norm=nothing, cmap=nothing, background_val=0, kwargs...)
+function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=gca(), norm=nothing, cmap=nothing, background_val=0, kwargs...)
     norm = get_mpl_norm(A, norm)
-    isnothing(background_val) || plt.gca().set_facecolor(plt.get_cmap(cmap)(norm(background_val)))
-    get_plt().imshow(
+    isnothing(background_val) || ax.set_facecolor(plt.get_cmap(cmap)(norm(background_val)))
+    mappable = ax.imshow(
         parent(A) |> permutedims;
         origin=:lower, extent=extent_arr(A),
         norm, cmap,
@@ -146,7 +148,7 @@ function imshow_ax(A::AbstractMatrix, colorbar=nothing; norm=nothing, cmap=nothi
         ) : (
             format=matplotlib.ticker.EngFormatter(unit=string(something(colorbar.unit, "")), places=0, sep=" "),
         )
-        cb = plt.colorbar(; colorbar.label, pad=0.02, cbar_kws...)
+        cb = plt.colorbar(mappable; colorbar.label, pad=0.02, cbar_kws...)
         isnothing(colorbar.title) || cb.ax.set_title(colorbar.title)
     end
 end
