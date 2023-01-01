@@ -9,13 +9,15 @@ using AxisKeys: KeyedArray, axiskeys, dimnames
 using OffsetArrays: OffsetArray
 using Unitful: Quantity, ustrip, unit
 using StatsBase: mad
+using Colors
+
 
 export
     plt, matplotlib,
     .., ±, ×,
     pyplot_style!, keep_plt_lims, set_xylims, xylabels,
     imshow_ax, SymLog, ColorBar,
-    adjust_lightness
+    mpl_color, adjust_lightness
 
 get_plt() = pyimport("matplotlib.pyplot")
 get_matplotlib() = pyimport("matplotlib")
@@ -84,6 +86,12 @@ function xylabels(xl, yl; inline=false, at=(0, 0))
         get_plt().ylabel(yl)
     end
 end
+
+PyCall.PyObject(c::Colorant) = PyObject(mpl_color(c))
+mpl_color(c::Colorant) = mpl_color(convert(RGB{Float64}, c))
+mpl_color(c::RGB{Float64}) = (red(c), green(c), blue(c))
+mpl_color(c::Union{Symbol, String, PyObject}) = RGB(matplotlib.colors.to_rgb(c)...)
+mpl_color(T::Type{<:Colorant}, c::Union{Symbol, String, PyObject}) = convert(T, mpl_color(c))
 
 function adjust_lightness(color, amount)
     c = get(pyimport("matplotlib.colors").cnames, color, color)
