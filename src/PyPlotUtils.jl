@@ -1,17 +1,15 @@
 module PyPlotUtils
 
 using PyCall
-import PyPlot
 using PyPlot: plt, matplotlib
 using IntervalSets
-using DomainSets
-using DomainSets: ×
+using DomainSets; using DomainSets: ×
 using AxisKeys: KeyedArray, axiskeys, dimnames
-using OffsetArrays: OffsetArray
 using Unitful: Quantity, ustrip, unit
 using StatsBase: mad
 using Colors
 using NonNegLeastSquares: nonneg_lsq
+using DirectionalStatistics
 using DataPipes
 using Accessors
 using LinearAlgebra: tril
@@ -22,7 +20,7 @@ export
     .., ±, ×,
     pyplot_style!,
     keep_plt_lims, set_xylims, lim_intersect, lim_union,
-    set_xylabels, xylabels, label_log_scales, legend_inline_right,
+    set_xylabels, xylabels, label_log_scales, draw_text_along, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
     mpl_color, adjust_lightness,
     axplotfunc,
@@ -33,20 +31,15 @@ include("legend.jl")
 include("artists.jl")
 
 
-get_plt() = pyimport("matplotlib.pyplot")
-get_matplotlib() = pyimport("matplotlib")
-gca() = get_plt().gca()
-
 """    pyplot_style!()
 Set up matplotlib to follow my preferred (opinionated!) style. """
 function pyplot_style!()
     seaborn = pyimport_conda("seaborn", "seaborn")
     seaborn.set_style("whitegrid", Dict("image.cmap" => "turbo"))
     seaborn.set_color_codes()
-    plt = get_plt()
     plt.rc("grid", alpha=0.4)
     plt.rc("savefig", bbox="tight", pad_inches=0)
-    rcParams = PyDict(get_matplotlib()."rcParams")
+    rcParams = PyDict(matplotlib."rcParams")
     for p in ["text.color", "axes.labelcolor", "xtick.color", "ytick.color"]
         rcParams[p] = "black"
     end
@@ -83,15 +76,17 @@ end
 "    lim_intersect(; [x::Interval], [y::Interval])
 Shrink plot limits to the intersection of current limits with passed intervals. "
 function lim_intersect(; x=nothing, y=nothing)
-    !isnothing(x) && plt.xlim(extrema(Interval(plt.xlim()...) ∩ x))
-    !isnothing(y) && plt.ylim(extrema(Interval(plt.ylim()...) ∩ y))
+    # XXX: should keep inverted axis
+    !isnothing(x) && plt.xlim(extrema(Interval(extrema(plt.xlim())...) ∩ x))
+    !isnothing(y) && plt.ylim(extrema(Interval(extrema(plt.ylim())...) ∩ y))
 end
 
 "    lim_union(; [x::Interval], [y::Interval])
 Expand plot limits to the union of current limits with passed intervals. "
 function lim_union(; x=nothing, y=nothing)
-    !isnothing(x) && plt.xlim(extrema(Interval(plt.xlim()...) ∩ x))
-    !isnothing(y) && plt.ylim(extrema(Interval(plt.ylim()...) ∩ y))
+    # XXX: should keep inverted axis
+    !isnothing(x) && plt.xlim(extrema(Interval(extrema(plt.xlim())...) ∩ x))
+    !isnothing(y) && plt.ylim(extrema(Interval(extrema(plt.ylim())...) ∩ y))
 end
 
 """    set_xylabels(matrix; [unit::Bool], [...])
@@ -224,13 +219,14 @@ end
 
 """    label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_label=10, base_data=10)
 Add ticks and their labels assuming that data values are `log(base_data, x)` of actual values.
+`which` should contain `x` and/or `y`.
 """
 function label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_data=10, base_label=10)
     keep_plt_lims() do
         map(which) do w
             lims = getproperty(ax, Symbol(:get_, w, :lim))()
             ticks = [
-                m * base_label^p
+                round(m * base_label^p, sigdigits=5)  # overcome floating point errors
                 for p in floor(lims[1] * log(base_label, base_data)):ceil(lims[2] * log(base_label, base_data))
                 for m in muls
             ]
@@ -238,6 +234,25 @@ function label_log_scales(which; ax=plt.gca(), muls=[1, 2, 5], base_data=10, bas
             getproperty(ax, Symbol(:set_, w, :ticklabels))(ticks)
         end
     end
+end
+
+"""    draw_text_along(xy, str, xys; offset_pixels=0, ...)
+Draw text at `xy` and rotate it along the `xys` curve.
+Text is made parallel to the direction between two points in `xys` closest to `xy`.
+"""
+function draw_text_along(xy, str::AbstractString, xys; offset_pixels=0, kwargs...)
+	a, b = first(sort(xys; by=p -> hypot((p .- xy)...)), 2)
+	a2b = b .- a
+	angle = atand(a2b[2], a2b[1])
+	trans_angle = plt.gca().transData.transform_angles([angle], reshape(collect(xy), (1, 2)))[1]
+	trans_angle = Circular.center_angle(trans_angle, at=0, range=180)
+	s_, c_ = sincosd(angle)
+	s, c = sincosd(trans_angle)
+
+	data_to_points = plt.gca().transData
+	xy_ = data_to_points.inverted().transform(data_to_points.transform(xy) .+ offset_pixels .* (s, -c))
+
+	plt.text(xy_..., str; rotation=trans_angle, va=:top, ha=:center, rotation_mode=:anchor, kwargs...)
 end
 
 end
