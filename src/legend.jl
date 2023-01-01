@@ -5,32 +5,41 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
 	# "font.size" in pt: 1 pt = 1/72 inches
 	fontsize_axunits = (matplotlib.rcParams["font.size"] / 72) / ax_height_inches
 	
+	ax.get_xlim()  # sometimes, transforms are not "initialized" (?) when calling this function
     transDataAxes = ax.transData + ax.transAxes.inverted()
 	@p begin
 		plt.gca().get_children()
 		filter(!startswith(string(_.get_label()), "_"))
 		filtermap() do obj
-			if pyisinstance(obj, matplotlib.collections.PolyCollection)
+			r = if pyisinstance(obj, matplotlib.collections.PolyCollection)
 				xy = @p begin
 					obj.get_paths()
 					only
 					eachrow(__.vertices)
-					maximum()
+					collect
+					@aside mx = maximum(_[1])
+					filter(_[1] == mx)
+					unique()  # fill_between repeat the upper point
+					sum(__) / length(__)
 					transDataAxes.transform()
 				end
-				(; label=obj.get_label(), xy, color=obj.get_edgecolor() |> eachrow |> only)
+				ec = mpl_color(HSV, obj.get_edgecolor() |> eachrow |> only)
+				fc = mpl_color(HSV, obj.get_facecolor() |> eachrow |> only)
+				color = ec.v < fc.v ? ec : fc
+				(; label=obj.get_label(), xy, color)
 			elseif pyisinstance(obj, matplotlib.lines.Line2D)
 				xy = @p begin
 					obj.get_xydata()
 					eachrow
-					collect
-					last
+					maximum()
 					transDataAxes.transform()
 				end
-				(; label=obj.get_label(), xy, color=obj.get_color())
+				(; label=obj.get_label(), xy, color=obj.get_color() |> mpl_color)
 			else
 				return nothing
 			end
+			@reset r.xy[2] = clamp(r.xy[2], 0, 1)
+			@reset r.color = alphacolor(r.color, 1)
 		end
 		@aside isempty(__) && return
 		@aside min_dist = 1.7 * fontsize_axunits * maximum(x -> length(split(x.label, '\n')), __)
