@@ -2,14 +2,17 @@
 Create a `matplotlib` `artist` that contains a scalebar with its label. Multiple scalebars are supported, one for each element of `scales = [(units_in_dataunit, unit_label), ...]`.
 """
 function ScalebarArtist(scales;
-		target_ax_frac=0.25,
+		target_ax_frac=0.2,
 		muls=[x*p for p in Real[1e-9, 1e-8, 1e-7, 1e-5, 1e-4, 1e-3, 0.01, 0.1, 1, 10, 100, 1000, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9] for x in [1, 2, 5]],
 		ax=plt.gca(), color=:k, sep=2.5,
         fontsize=nothing,
 		which=:x, loc=["lower center", "center right"][_resolve_which(which)],
 	)
 	which = _resolve_which(which)
-    ax_size_dataunits = (ax.transAxes + ax.transData.inverted()).transform((1, 1))[which] |> abs
+
+	ax_size_dataunits = let T = ax.transAxes + ax.transData.inverted()
+    	(T.transform((1, 1)) .- T.transform((0, 0)))[which] |> abs
+	end
 
     boxes = map(scales) do (units_in_dataunit, unitspec)
         mul = argmin(m -> abs(1 / units_in_dataunit * m - target_ax_frac * ax_size_dataunits), muls)
