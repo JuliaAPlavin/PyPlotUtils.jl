@@ -1,5 +1,6 @@
 module AxisKeysExt
 using AxisKeys: KeyedArray, axiskeys, dimnames
+using PyPlotUtils.IntervalSets
 using PyPlotUtils
 import PyPlotUtils: extent_ax, extent_arr, plot_ax, fill_between_ax, pcolormesh_ax
 
