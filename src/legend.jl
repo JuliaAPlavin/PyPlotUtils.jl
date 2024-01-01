@@ -14,7 +14,9 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
         plt.gca().get_children()
         filter(!startswith(string(_.get_label()), "_"))
         filtermap() do obj
-            r = if pyisinstance(obj, matplotlib.collections.PolyCollection)
+            r = if pyisinstance(obj, matplotlib.collections.PolyCollection) || pyisinstance(obj, matplotlib.collections.PathCollection)
+                # fill_between
+                # scatter
                 xy = @p begin
                     obj.get_paths()
                     only
@@ -31,6 +33,7 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
                 color = ec.v < fc.v ? ec : fc
                 (; label=obj.get_label(), xy, color)
             elseif pyisinstance(obj, matplotlib.lines.Line2D)
+                # plot, hline
                 xy = @p begin
                     obj.get_xydata()
                     eachrow
@@ -40,6 +43,22 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
                     transDataAxes.transform()
                 end
                 (; label=obj.get_label(), xy, color=obj.get_color() |> mpl_color)
+            elseif pyisinstance(obj, matplotlib.patches.Polygon)
+                # hspan
+                xy = @p begin
+                    obj.get_xy()
+                    eachrow
+                    collect
+                    filter(x_increasing ? _[1] <= xl[2] : _[1] >= xl[2])
+                    @aside mxy = x_increasing ? maximum(__) : minimum(__)
+                    filter(_[1] == mxy[1])
+                    sum(__) / length(__)
+                    transDataAxes.transform()
+                end
+                ec = mpl_color(HSV, obj.get_edgecolor())
+                fc = mpl_color(HSV, obj.get_facecolor())
+                color = ec.v < fc.v ? ec : fc
+                (; label=obj.get_label(), xy, color)
             else
                 return nothing
             end
