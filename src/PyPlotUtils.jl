@@ -23,7 +23,7 @@ export
     keep_plt_lims, set_xylims, lim_intersect, lim_union,
     set_xylabels, xylabels, label_log_scales, draw_text_along, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
-    pcolormesh_ax, plot_ax, fill_between_ax,
+    pcolormesh_ax, plot_ax, fill_between_ax, errorbar, errorbar_ax,
     mpl_color, adjust_lightness,
     axplotfunc, add_zoom_patch,
     ScalebarArtist
@@ -202,7 +202,21 @@ end
 # XXX: generalize somehow? like axiskeys(pcolormesh)(A) or ...?
 function plot_ax end
 function fill_between_ax end
+function errorbar_ax end
 function pcolormesh_ax end
+
+errorbar(x, y; kwargs...) = errorbar([x], [y]; kwargs...)
+function errorbar(x::AbstractVector, y::AbstractVector; midfunc=mean, kwargs...)
+    xmids = midfunc.(x)
+    xerr = map(x) do x
+        abs.(extrema(x) .- midfunc(x))
+    end |> stack
+    ymids = midfunc.(y)
+    yerr = map(y) do x
+        abs.(extrema(x) .- midfunc(x))
+    end |> stack
+    plt.errorbar(xmids, ymids; xerr, yerr, kwargs...)
+end
 
 """    axplotfunc(f; ax=plt.gca(), n=10, [plot() kwargs...])
 Plot `y = f(x)` within the current axis limits. Uses `n` points that uniformly split the whole `x` interval. """

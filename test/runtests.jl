@@ -1,4 +1,5 @@
 using PyPlotUtils
+using IntervalSets
 using AxisKeys
 using OffsetArrays
 using Unitful
@@ -41,6 +42,15 @@ imshow_ax(KeyedArray([1 2; 3 4], a=-5:-4, b=0:1))
 imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"))
 imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"), ColorBar())
 imshow_ax(KeyedArray([1 2; 3 4], a=(-5:-4)u"m", b=(0:1)u"m"), ColorBar(); norm=SymLog())
+
+plot_ax(KeyedArray([1, 2, 3], a=5:7))
+fill_between_ax(KeyedArray([1..2, 2..3, 3..4], a=5:7))
+errorbar_ax(KeyedArray([1..2, 2..3, 3..4], a=5:7))
+pcolormesh_ax(KeyedArray([1 2; 3 4], a=-5:-4, b=0:1))
+errorbar(1, 1..2)
+errorbar(1..2, 1)
+errorbar(1..2, 1..2)
+errorbar([1..2], [1..2])
 
 plt.gca().add_artist(ScalebarArtist([(1, "px")]))
 
