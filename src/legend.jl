@@ -12,7 +12,7 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
     transDataAxes = ax.transData + ax.transAxes.inverted()
     @p begin
         plt.gca().get_children()
-        filter(!startswith(string(_.get_label()), "_"))
+        filter(_.get_label() isa String && !isempty(_.get_label()) && !startswith(_.get_label(), "_"))
         filtermap() do obj
             r = if pyisinstance(obj, matplotlib.collections.PolyCollection) || pyisinstance(obj, matplotlib.collections.PathCollection)
                 # fill_between

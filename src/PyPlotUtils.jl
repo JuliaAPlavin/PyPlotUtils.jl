@@ -5,13 +5,11 @@ using PyPlot: plt, matplotlib
 using IntervalSets
 using DomainSets
 using DomainSets: ×
-using AxisKeys: KeyedArray, axiskeys, dimnames
-using Unitful: Quantity, ustrip, unit
 using Statistics: mean
 using StatsBase: mad
-using Colors
+using ColorTypes
 using NonNegLeastSquares: nonneg_lsq
-using DirectionalStatistics
+using DirectionalStatistics: Circular
 using DataPipes: @p
 using FlexiMaps: filtermap
 using Accessors
@@ -25,7 +23,7 @@ export
     keep_plt_lims, set_xylims, lim_intersect, lim_union,
     set_xylabels, xylabels, label_log_scales, draw_text_along, legend_inline_right,
     imshow_ax, SymLog, ColorBar,
-    pcolormesh_ax, plot_ax, fill_between_ax,
+    pcolormesh_ax, plot_ax, fill_between_ax, errorbar, errorbar_ax,
     mpl_color, adjust_lightness,
     axplotfunc, add_zoom_patch,
     ScalebarArtist
@@ -43,10 +41,8 @@ function pyplot_style!()
     seaborn.set_color_codes()
     plt.rc("grid", alpha=0.4)
     plt.rc("savefig", bbox="tight", pad_inches=0)
-    plt.rc("axes", edgecolor="0.5")
-    plt.rc("legend", edgecolor="0.5")
     rcParams = PyDict(matplotlib."rcParams")
-    for p in ["text.color", "axes.labelcolor", "xtick.color", "ytick.color"]
+    for p in ["text.color", "axes.labelcolor", "xtick.color", "ytick.color", "axes.edgecolor", "legend.edgecolor"]
         rcParams[p] = "black"
     end
 end
@@ -95,17 +91,9 @@ function lim_union(; x=nothing, y=nothing)
     !isnothing(y) && plt.ylim(extrema(Interval(extrema(plt.ylim())...) ∩ y))
 end
 
-"""    set_xylabels(matrix; [unit::Bool], [...])
+"""    set_xylabels(matrix; [units::Bool], [...])
 Set the `x` and `y` plot labels to `dimnames` of the `matrix`. Assumes that the `matrix` is plotted with `imshow_ax`. """
-function set_xylabels(A::AbstractMatrix; units=eltype(axiskeys(A, 1)) <: Quantity, kwargs...)
-    ustrs = if units
-        T = eltype.(axiskeys(A))
-        " ($(unit(T[1])))", " ($(unit(T[2])))"
-    else
-        "", ""
-    end
-    set_xylabels("$(dimnames(A, 1))$(ustrs[1])", "$(dimnames(A, 2))$(ustrs[2])"; kwargs...)
-end
+function set_xylabels end
 
 """    set_xylabels(xl, yl; inline=false, at=(0, 0), ax=plt.gca())
 
@@ -147,9 +135,7 @@ function adjust_lightness(color, amount)
 end
 
 extent_ax(a::AbstractRange) = (first(a) - step(a) / 2, last(a) + step(a) / 2)
-extent_ax(a::AbstractRange{<:Quantity}) = extent_ax(ustrip.(a))
 extent_arr(A::AbstractMatrix) = (extent_ax(axes(A, 1))..., extent_ax(axes(A, 2))...)  # regular arrays, OffsetArrays, (...?)
-extent_arr(A::KeyedArray) = (extent_ax(axiskeys(A, 1))..., extent_ax(axiskeys(A, 2))...)
 
 
 Base.@kwdef struct ColorBar
@@ -212,24 +198,22 @@ function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothi
 end
 
 # XXX: generalize somehow? like axiskeys(pcolormesh)(A) or ...?
+function plot_ax end
+function fill_between_ax end
+function errorbar_ax end
+function pcolormesh_ax end
 
-function pcolormesh_ax(A::KeyedArray; kwargs...)
-    res = plt.pcolormesh(
-        axiskeys(A, 1),
-        axiskeys(A, 2),
-        permutedims(A);
-        kwargs...
-    )
-    set_xylabels(A)
-    res
-end
-
-function plot_ax(A::KeyedArray; kwargs...)
-    plt.plot(only(axiskeys(A)), A; kwargs...)
-end
-
-function fill_between_ax(A::KeyedArray; kwargs...)
-    plt.fill_between(only(axiskeys(A)), leftendpoint.(A), rightendpoint.(A); kwargs...)
+errorbar(x, y; kwargs...) = errorbar([x], [y]; kwargs...)
+function errorbar(x::AbstractVector, y::AbstractVector; midfunc=mean, kwargs...)
+    xmids = midfunc.(x)
+    xerr = map(x) do x
+        abs.(extrema(x) .- midfunc(x))
+    end |> stack
+    ymids = midfunc.(y)
+    yerr = map(y) do x
+        abs.(extrema(x) .- midfunc(x))
+    end |> stack
+    plt.errorbar(xmids, ymids; xerr, yerr, kwargs...)
 end
 
 """    axplotfunc(f; ax=plt.gca(), n=10, [plot() kwargs...])
