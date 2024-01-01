@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -170,12 +170,21 @@ let
 	figs
 end
 
+# ╔═╡ ffe47808-80a4-43d8-bbb4-80d0b2461403
+let
+	plt.figure()
+	fimg = VLBI.load(joinpath(dirname(pathof(VLBI)), "../test/data/map.fits"))
+	imshow_ax(fimg.data; norm=SymLog(), cmap=:inferno, inline=true)
+	plt.colorbar()
+	set_xylims((0±70)^2)
+	plt.gcf()
+end
+
 # ╔═╡ 77dd7281-7fa2-492b-908e-e819b09a078b
 let
 	plt.figure()
 	fimg = VLBI.load(joinpath(dirname(pathof(VLBI)), "../test/data/map.fits"))
-	imshow_ax(fimg.data, ColorBar(unit="Jy"); norm=SymLog(), cmap=:inferno)
-	xylabels(fimg.data, inline=true)
+	imshow_ax(fimg.data, ColorBar(unit="Jy"); norm=SymLog(), cmap=:inferno, inline=true)
 	set_xylims((0±70)^2)
 	plt.gcf()
 end
@@ -407,7 +416,7 @@ VLBIData = "~0.3.14"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.2"
 manifest_format = "2.0"
 project_hash = "f5868d400992d494e9bffbbf491d61db1abe5979"
 
@@ -577,7 +586,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.CompositeTypes]]
 git-tree-sha1 = "02d2316b7ffceff992f3096ae48c7829a8aa0638"
@@ -995,7 +1004,7 @@ version = "2.7.0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
@@ -1041,7 +1050,7 @@ version = "2.11.1"
 deps = ["Accessors", "ColorTypes", "DataPipes", "DirectionalStatistics", "DomainSets", "FlexiMaps", "IntervalSets", "LinearAlgebra", "NonNegLeastSquares", "PyCall", "PyPlot", "Statistics", "StatsBase"]
 path = "../../home/aplavin/.julia/dev/PyPlotUtils"
 uuid = "5384e752-6c47-47b3-86ac-9d091b110b31"
-version = "0.1.28"
+version = "0.1.30"
 weakdeps = ["AxisKeys", "Unitful"]
 
     [deps.PyPlotUtils.extensions]
@@ -1318,6 +1327,7 @@ version = "17.4.0+0"
 # ╟─43787905-66d8-4aba-bf5d-88da7a1ea48b
 # ╟─23806204-098d-4865-9b11-59e3457857a2
 # ╠═b5161436-535d-44ef-aa2e-14880636a9cf
+# ╠═ffe47808-80a4-43d8-bbb4-80d0b2461403
 # ╠═77dd7281-7fa2-492b-908e-e819b09a078b
 # ╟─c95d28bd-5ad5-4f40-b57c-02f039951a8c
 # ╠═dabeff3d-f0eb-47c7-be65-f47a19201597
