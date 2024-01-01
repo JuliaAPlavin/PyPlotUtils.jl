@@ -1,12 +1,11 @@
 name = "PyPlotUtils"
 uuid = "5384e752-6c47-47b3-86ac-9d091b110b31"
 authors = ["Alexander Plavin <alexander@plav.in>"]
-version = "0.1.25"
+version = "0.1.26"
 
 [deps]
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
-AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
-Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+ColorTypes = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
 DataPipes = "02685ad9-2d12-40c3-9f73-c6aeda6a7ff5"
 DirectionalStatistics = "e814f24e-44b0-11e9-2fd5-aba2b6113d95"
 DomainSets = "5b8099bc-c8ec-5219-889f-1d9e522a28bf"
@@ -18,20 +17,28 @@ PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+
+[weakdeps]
+AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+
+[extensions]
+AxisKeysExt = "AxisKeys"
+AxisKeysUnitfulExt = ["AxisKeys", "Unitful"]
+UnitfulExt = "Unitful"
 
 [compat]
 Accessors = "0.1.8"
-AxisKeys = "0.1, 0.2"
-Colors = "0.12"
-DataPipes = "0.2.7, 0.3"
+AxisKeys = "0.2.12"
+ColorTypes = "0.11"
+DataPipes = "0.3"
 DirectionalStatistics = "0.1.14"
-DomainSets = "0.5.9, 0.6"
+DomainSets = "0.6"
 FlexiMaps = "0.1"
-IntervalSets = "0.5.3, 0.6, 0.7"
+IntervalSets = "0.7"
 NonNegLeastSquares = "0.4.0"
 PyCall = "1.92"
 PyPlot = "2.9"
 StatsBase = "0.33"
 Unitful = "1.9"
-julia = "1.7"
+julia = "1.9"
