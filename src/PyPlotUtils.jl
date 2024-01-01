@@ -41,10 +41,8 @@ function pyplot_style!()
     seaborn.set_color_codes()
     plt.rc("grid", alpha=0.4)
     plt.rc("savefig", bbox="tight", pad_inches=0)
-    plt.rc("axes", edgecolor="0.5")
-    plt.rc("legend", edgecolor="0.5")
     rcParams = PyDict(matplotlib."rcParams")
-    for p in ["text.color", "axes.labelcolor", "xtick.color", "ytick.color"]
+    for p in ["text.color", "axes.labelcolor", "xtick.color", "ytick.color", "axes.edgecolor", "legend.edgecolor"]
         rcParams[p] = "black"
     end
 end
