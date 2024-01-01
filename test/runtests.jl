@@ -56,3 +56,6 @@ add_zoom_patch(plt.gca(), plt.gca(), :horizontal)
 
 import CompatHelperLocal as CHL
 CHL.@check()
+import Aqua
+Aqua.test_all(PyPlotUtils; ambiguities=false, project_toml_formatting=false)
+Aqua.test_ambiguities(PyPlotUtils; recursive=false)
