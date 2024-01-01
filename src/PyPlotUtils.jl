@@ -93,7 +93,7 @@ end
 
 """    set_xylabels(matrix; [units::Bool], [...])
 Set the `x` and `y` plot labels to `dimnames` of the `matrix`. Assumes that the `matrix` is plotted with `imshow_ax`. """
-function set_xylabels end
+function set_xylabels(::AbstractMatrix; kwargs...) end
 
 """    set_xylabels(xl, yl; inline=false, at=(0, 0), ax=plt.gca())
 
@@ -146,7 +146,7 @@ end
 
 Base.@kwdef struct SymLog
     linthresh = nothing
-    nσ = 15
+    nσ = 25
     vmin = nothing
     vmax = nothing
 end
@@ -159,7 +159,7 @@ get_mpl_norm(A, n::SymLog) = let
         linthresh,
         vmin=@something(n.vmin, minimum(A)),
         vmax=@something(n.vmax, maximum(A)),
-        base=ℯ  # before mpl 3.4: default base is ℯ; mpl 3.4+: default base is 10
+        base=10
     )
 end
 
@@ -174,7 +174,7 @@ For other arrays `axes(A)` become coordinates. Works with regular `Array`s, `Off
 
 Extra `kwargs` not listed in the signature are passed to `matplotlib`'s `imshow`.
 """
-function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothing, cmap=nothing, background_val=0, kwargs...)
+function imshow_ax(A::AbstractMatrix, colorbar=nothing; inline=false, ax=plt.gca(), norm=nothing, cmap=nothing, background_val=0, kwargs...)
     plt.sca(ax)
     norm = get_mpl_norm(A, norm)
     isnothing(background_val) || ax.set_facecolor(plt.get_cmap(cmap)(norm(background_val)))
@@ -184,6 +184,7 @@ function imshow_ax(A::AbstractMatrix, colorbar=nothing; ax=plt.gca(), norm=nothi
         norm, cmap,
         kwargs...
     )
+    set_xylabels(A; inline)
     if !isnothing(colorbar)
         cbar_kws = hasproperty(norm, :linthresh) ? (
             ticks=matplotlib.ticker.SymmetricalLogLocator(; subs=[1, 2, 5], base=10, norm.linthresh),
@@ -290,5 +291,7 @@ function add_zoom_patch(axA, axB, dir::Symbol; color=:k)
         ))
     end
 end
+
+_ustrip(x) = x
 
 end
