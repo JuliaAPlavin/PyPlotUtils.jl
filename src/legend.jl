@@ -24,9 +24,9 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
                     collect
                     @aside mx = maximum(_[1])
                     filter(_[1] == mx)
-                    unique()  # fill_between repeat the upper point
-                    sum(__) / length(__)
-                    transDataAxes.transform()
+                    unique  # fill_between repeat the upper point
+                    map(transDataAxes.transform)
+                    mean
                 end
                 ec = mpl_color(HSV, obj.get_edgecolor() |> eachrow |> only)
                 fc = mpl_color(HSV, obj.get_facecolor() |> eachrow |> only)
@@ -52,8 +52,8 @@ function legend_inline_right(; ax=plt.gca(), fig=plt.gcf())
                     filter(x_increasing ? _[1] <= xl[2] : _[1] >= xl[2])
                     @aside mxy = x_increasing ? maximum(__) : minimum(__)
                     filter(_[1] == mxy[1])
-                    sum(__) / length(__)
-                    transDataAxes.transform()
+                    map(transDataAxes.transform)
+                    mean
                 end
                 ec = mpl_color(HSV, obj.get_edgecolor())
                 fc = mpl_color(HSV, obj.get_facecolor())

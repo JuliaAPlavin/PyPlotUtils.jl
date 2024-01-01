@@ -197,6 +197,16 @@ let
 	plt.gcf()
 end
 
+# ╔═╡ c371b490-22b0-4810-bcf9-d68bf395945c
+let
+	plt.figure()
+	plt.axhspan(1, 2.5, label="hSpan 1", alpha=0.3, color=:C4)
+	plt.axhspan(5, 35, label="hSpan 2\nabc", alpha=0.3, color=:C5)
+	plt.yscale(:log)
+	legend_inline_right()
+	plt.gcf()
+end
+
 # ╔═╡ c13cdbdd-05b2-498c-b86b-1dba60e7b678
 let
 	plt.figure()
@@ -923,10 +933,10 @@ uuid = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 version = "2.11.0"
 
 [[deps.PyPlotUtils]]
-deps = ["Accessors", "AxisKeys", "Colors", "DataPipes", "DirectionalStatistics", "DomainSets", "FlexiMaps", "IntervalSets", "LinearAlgebra", "NonNegLeastSquares", "PyCall", "PyPlot", "StatsBase", "Unitful"]
+deps = ["Accessors", "AxisKeys", "Colors", "DataPipes", "DirectionalStatistics", "DomainSets", "FlexiMaps", "IntervalSets", "LinearAlgebra", "NonNegLeastSquares", "PyCall", "PyPlot", "Statistics", "StatsBase", "Unitful"]
 path = "../../home/aplavin/.julia/dev/PyPlotUtils"
 uuid = "5384e752-6c47-47b3-86ac-9d091b110b31"
-version = "0.1.23"
+version = "0.1.24"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -1170,6 +1180,7 @@ version = "17.4.0+0"
 # ╠═77dd7281-7fa2-492b-908e-e819b09a078b
 # ╟─c95d28bd-5ad5-4f40-b57c-02f039951a8c
 # ╠═dabeff3d-f0eb-47c7-be65-f47a19201597
+# ╠═c371b490-22b0-4810-bcf9-d68bf395945c
 # ╠═c13cdbdd-05b2-498c-b86b-1dba60e7b678
 # ╟─cd3de117-4b80-44f5-aee9-595d435af230
 # ╠═ac5012ec-2666-4d5d-956a-223142fc3441

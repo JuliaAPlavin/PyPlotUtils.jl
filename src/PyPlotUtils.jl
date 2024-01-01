@@ -7,6 +7,7 @@ using DomainSets
 using DomainSets: ×
 using AxisKeys: KeyedArray, axiskeys, dimnames
 using Unitful: Quantity, ustrip, unit
+using Statistics: mean
 using StatsBase: mad
 using Colors
 using NonNegLeastSquares: nonneg_lsq
